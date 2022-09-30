@@ -1,0 +1,121 @@
+{
+  "id": "3670059",
+  "name": "立可得",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "410498",
+      "name": "警告",
+      "font_class": "jinggao",
+      "unicode": "e64f",
+      "unicode_decimal": 58959
+    },
+    {
+      "icon_id": "583015",
+      "name": "我的订单",
+      "font_class": "74wodedingdan",
+      "unicode": "e64e",
+      "unicode_decimal": 58958
+    },
+    {
+      "icon_id": "830922",
+      "name": "更多",
+      "font_class": "gengduo",
+      "unicode": "e62f",
+      "unicode_decimal": 58927
+    },
+    {
+      "icon_id": "853083",
+      "name": "房子",
+      "font_class": "fangzi",
+      "unicode": "e6d3",
+      "unicode_decimal": 59091
+    },
+    {
+      "icon_id": "2199033",
+      "name": "文件管理",
+      "font_class": "wenjianguanli",
+      "unicode": "e615",
+      "unicode_decimal": 58901
+    },
+    {
+      "icon_id": "2959077",
+      "name": "人员管理",
+      "font_class": "renyuanguanli",
+      "unicode": "e62d",
+      "unicode_decimal": 58925
+    },
+    {
+      "icon_id": "3267390",
+      "name": "灯泡",
+      "font_class": "dengpao",
+      "unicode": "e611",
+      "unicode_decimal": 58897
+    },
+    {
+      "icon_id": "5387975",
+      "name": "账单_o",
+      "font_class": "zhangdan_o",
+      "unicode": "eba4",
+      "unicode_decimal": 60324
+    },
+    {
+      "icon_id": "6677532",
+      "name": "位置",
+      "font_class": "weizhi",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    },
+    {
+      "icon_id": "13646812",
+      "name": "拼图",
+      "font_class": "pintu",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "13672652",
+      "name": "充电桩",
+      "font_class": "chongdianzhuang",
+      "unicode": "e672",
+      "unicode_decimal": 58994
+    },
+    {
+      "icon_id": "4354835",
+      "name": "闭眼睛",
+      "font_class": "biyanjing",
+      "unicode": "e901",
+      "unicode_decimal": 59649
+    },
+    {
+      "icon_id": "10715457",
+      "name": "眼睛-睁眼",
+      "font_class": "yanjing-zhengyan",
+      "unicode": "e63a",
+      "unicode_decimal": 58938
+    },
+    {
+      "icon_id": "4084751",
+      "name": "锁",
+      "font_class": "suo",
+      "unicode": "e63f",
+      "unicode_decimal": 58943
+    },
+    {
+      "icon_id": "5387761",
+      "name": "手机_o",
+      "font_class": "shouji_o",
+      "unicode": "eb4d",
+      "unicode_decimal": 60237
+    },
+    {
+      "icon_id": "10392612",
+      "name": "盾牌",
+      "font_class": "dunpai",
+      "unicode": "e604",
+      "unicode_decimal": 58884
+    }
+  ]
+}
