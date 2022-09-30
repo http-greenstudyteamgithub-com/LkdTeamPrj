@@ -30,7 +30,13 @@ export default {
       label1: '点位搜索',
       label2: '区域搜索',
       tableData: [], // 表格数据
-      headerColumns: [], // 表头
+      headerColumns: [
+        // 序号
+        {
+          index: true,
+          label: '序号'
+        }
+      ], // 表头
       totalCount: 0, // 总数量
       totalPage: 0, // 总页数
       searchCondition: {
@@ -52,7 +58,7 @@ export default {
       try {
         const res = await getRegion(searchCondition)
         this.AllRegionList = res.currentPageRecords
-        console.log(res)
+        console.log(this.AllRegionList)
       } catch (error) {
         console.log(error)
       }
