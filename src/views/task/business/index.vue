@@ -86,7 +86,7 @@
     <!-- 工单配置弹出窗 -->
     <TaskSetDialog :show-set-dialog.sync="showSetDialog" />
     <!-- 查看详情弹出窗 -->
-    <TaskDetailDialog ref="detailDialog" :show-dialog.sync="showTaskDetailDialog" :detail-info="detailInfo" @initTaskList="initTaskResult" />
+    <TaskDetailDialog ref="detailDialog" :show-dialog.sync="showTaskDetailDialog" :detail-info="detailInfo" @initTaskResult="initTaskResult" />
   </div>
 </template>
 

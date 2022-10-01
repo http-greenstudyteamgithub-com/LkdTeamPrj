@@ -67,7 +67,7 @@
       </el-row>
     </el-dialog>
     <!-- 补货清单 -->
-    <GoodsDialog :show-goods-dialog.sync="showGoodsDialog" />
+    <GoodsDialog ref="goodsDialog" :show-goods-dialog.sync="showGoodsDialog" />
   </div>
 </template>
 
@@ -137,7 +137,6 @@ export default {
       // 清除校验 重置表单项
       this.$refs.createTaskForm.resetFields()
       // 相关信息置空
-      // this.taskTypeList = []
       this.operatorList = []
     },
     async  btnConfirm() {
@@ -163,19 +162,20 @@ export default {
     async getTaskType() {
       if (this.path === '/task/business') {
         const res = await getTaskType()
-        this.taskTypeList = res.find(item => item.type === 2)
+        this.taskTypeList = res.filter(item => item.type === 2)
       } else {
         const res = await getTaskType()
         this.taskTypeList = res.filter(item => item.type !== 2)
         console.log(this.createTaskForm.taskTypeList)
       }
     },
-    // 增加补货清单
+    // 获取补货清单
     async  getReplenishmentList() {
       this.$refs.createTaskForm.validateField('innerCode', (errorMessage) => {
-        console.log(errorMessage)
         const valid = errorMessage === ''
         if (valid) {
+          // 发请求
+          // 展示弹窗
           this.showGoodsDialog = true
         }
       })

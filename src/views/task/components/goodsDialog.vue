@@ -6,7 +6,7 @@
     @close="closeDialog"
   >
     <!-- 表格 -->
-    <Table />
+    <Table max-height="300px" :table-data="tableData" :header-columns="headerColumns" />
     <!-- 按钮 -->
     <el-row slot="footer" type="flex" justify="center" align="middle" class="dialog-footer">
       <el-button class="set" @click="closeDialog">取 消</el-button>
@@ -25,7 +25,9 @@ export default {
   },
   data() {
     return {
-      confirmLoading: false
+      confirmLoading: false,
+      tableData: [], // 表格数据
+      headerColumns: []// 表头
     }
   },
   methods: {

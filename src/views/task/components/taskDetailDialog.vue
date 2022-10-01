@@ -120,7 +120,7 @@
     <!-- 补货详情 -->
     <GoodsDialog :show-goods-dialog.sync="showGoodsDialog" />
     <!-- 新增工单 -->
-    <AddTaskDialog ref="addDialog" :show-add-dialog.sync="showAddDialog" />
+    <AddTaskDialog ref="addDialog" :show-add-dialog.sync="showAddDialog" @initTaskList="$emit('initTaskResult')" />
   </div>
 </template>
 
