@@ -118,7 +118,7 @@
       </div>
     </el-dialog>
     <!-- 补货详情 -->
-    <GoodsDialog :show-goods-dialog.sync="showGoodsDialog" />
+    <GoodsDialog ref="goodsDetail" :show-goods-dialog.sync="showGoodsDialog" :table-data="addGoodsDetails" :header-columns="headerColumns" />
     <!-- 新增工单 -->
     <AddTaskDialog ref="addDialog" :show-add-dialog.sync="showAddDialog" @initTaskList="$emit('initTaskResult')" />
   </div>
@@ -151,11 +151,23 @@ export default {
       confirmLoading: false,
       addGoodsDetails: [], // 补货清单
       showGoodsDialog: false,
-      image1: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fpic.51yuansu.com%2Fpic3%2Fcover%2F02%2F58%2F28%2F59fb9c8cc0a81_610.jpg&refer=http%3A%2F%2Fpic.51yuansu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1666970786&t=f899aaa4e12ee0db0e4d365d31c3f42c'
+      image1: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fpic.51yuansu.com%2Fpic3%2Fcover%2F02%2F58%2F28%2F59fb9c8cc0a81_610.jpg&refer=http%3A%2F%2Fpic.51yuansu.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1666970786&t=f899aaa4e12ee0db0e4d365d31c3f42c',
+      headerColumns: [
+        {
+          label: '货道编号',
+          prop: 'channelCode'
+        },
+        {
+          label: '商品',
+          prop: 'skuName'
+        },
+        {
+          label: '补货数量',
+          prop: 'expectCapacity'
+        }
+      ]// 表头（历史补货详情）
+
     }
-  },
-  created() {
-    console.log(this.path)
   },
   methods: {
     closeDialog() {
@@ -181,7 +193,7 @@ export default {
     // 重新创建
     async createAgain() {
       // 获取补货清单
-      await this.getTaskDetails()
+      this.addGoodsDetails = await getTaskDetails(this.detailInfo.taskId)
       this.$refs.addDialog.createTaskForm = this.detailInfo
       this.$refs.addDialog.createTaskForm.productType = this.detailInfo.productTypeId
       this.$refs.addDialog.createTaskForm.details = this.addGoodsDetails
@@ -189,14 +201,11 @@ export default {
       this.showAddDialog = true
       this.closeDialog()
     },
-    // 获取补货详情
-    async  getTaskDetails() {
+    // 查看补货详情
+    async showGoodsDetail() {
       this.addGoodsDetails = await getTaskDetails(this.detailInfo.taskId)
       console.log(this.addGoodsDetails)
-    },
-    // 查看补货详情
-    showGoodsDetail() {
-      console.log(1)
+      // 把数据传给子元素
       this.showGoodsDialog = true
     }
   }
@@ -217,7 +226,7 @@ export default {
   line-height: 36px;
 }
 .form{
-  padding: 0 30px;
+  padding: 0 10px;
 }
 .task{
   .el-message-box__status.el-icon-warning {
