@@ -250,7 +250,7 @@ export default {
 }
 </script>
 
-<style  lang="scss">
+<style  lang="scss" >
 .el-form-item__label{
   margin:0
 }
@@ -260,7 +260,7 @@ export default {
 }
 .el-dialog {
     border-radius: 10px;
-}
+}wq
 .el-dialog .el-dialog__header .el-dialog__title {
     line-height: 22px;
     font-size: 16px;
