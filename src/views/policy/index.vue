@@ -11,7 +11,7 @@
           :clearable="true"
           style="width:200px;margin-right: 8px;height: 36px;line-height: 36px; "
         />
-        <el-button type="primary" style="background-color:#5373e0" class="el-icon-search">  查询</el-button>
+        <el-button type="primary" style="background-color:#5373e0" class="el-icon-search" @click="searthFn">  查询</el-button>
       </el-card>
     </div>
     <!-- 搜索组件模块 M -->
@@ -52,7 +52,8 @@
             <!-- 查询详情按钮 -->
             <div class="btn-content">
               <Details />
-              <el-button size="medium " type="text" style="color:#86b42b">修改</el-button>
+              <Amend :table-data="tableData" />
+
               <el-button size="medium " type="text" style="color:#ff5a5a">删除</el-button>
             </div>
           </template>
@@ -68,10 +69,11 @@
 <script>
 import addBtn from './components/addBtn'
 import Details from './components/Details'
-import { getTacticsListAPI, getVmPolicyAPI } from '@/api'
+import Amend from './components/Amend'
+import { getTacticsListAPI, getSearthListAPI } from '@/api'
 export default {
   name: 'Policy',
-  components: { addBtn, Details },
+  components: { addBtn, Details, Amend },
   data() {
     return {
       dialogVisible: false,
@@ -93,21 +95,22 @@ export default {
     // 策略列表
     async getTacticsList() {
       const res = await getTacticsListAPI()
-      // console.log(res)
+      console.log(res)
       this.tableData = res
+      this.discount = res.discount
+      console.log(this.discount)
     },
     // 策略详情弹出层
-    async getVmPolicy() {
-      try {
-        await getVmPolicyAPI(this.pageIndex, this.pageSize)
-      } catch (error) {
-        console.log(error)
-      }
-    },
+
     handleClose() {
     },
     headerCellStyle() {
       return 'background-color:#f3f6fb;font-weight:400;'
+    },
+    async searthFn() {
+      const { currentPageRecords } = await getSearthListAPI(this.pageIndex, this.pageSize, this.input)
+      this.tableData = currentPageRecords
+      this.input = ''
     }
 
   }

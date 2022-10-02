@@ -7,7 +7,6 @@
         <!-- 第一个输入框 -->
         <el-form-item
           label="策略名称："
-          maxlength="10"
           show-word-limit
         >
           <el-input
@@ -15,16 +14,19 @@
             style="margin-bottom: 15px;"
             class="input1"
             placeholder="请输入"
+            maxlength="10"
+
+            show-word-limit
           />
         </el-form-item>
         <!-- 第二个输入框 -->
         <el-form-item label="策略方案：">
-          <el-input-number v-model="FormData.num" controls-position="right" :min="1" :max="10" class="input1" placeholder="请输入" @change="handleChange" />
+          <el-input-number v-model="FormData.num" controls-position="right" :min="1" :max="10" class="input1" label="num" @change="handleChange" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button class="quxiao-btn" @click="handleClose">取 消</el-button>
-        <el-button class="queding-btn">确 定</el-button>
+        <el-button class="queding-btn" @click="confirmAdd">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -39,15 +41,9 @@ export default {
     return {
       dialogFormVisible: false,
       FormData: {
-        num: '',
         name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
+        num: 1
+
       }
     }
   },
@@ -57,12 +53,16 @@ export default {
       this.$refs.FormData.resetFields()
       console.log(this.FormData.name)
     },
-    handleChange() {},
+    handleChange() {
+    },
     // 新建 按钮弹出层
     newForm() {
       this.dialogFormVisible = true
 
       console.log('弹出')
+    },
+    async confirmAdd() {
+
     }
   }
 }

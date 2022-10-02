@@ -15,3 +15,12 @@ export const getTacticsListAPI = () => {
   })
 }
 
+// 搜索
+export const getSearthListAPI = (pageIndex, pageSize, policyName) => {
+  return request({
+    url: `/api/vm-service/policy/search`,
+    params: {
+      pageIndex, pageSize, policyName
+    }
+  })
+}
