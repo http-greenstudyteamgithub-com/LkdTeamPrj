@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 搜索通栏 -->
-    <SearchPanel label1="区域搜索: " :label1value.sync="searchCondition.taskCode" />
+    <SearchPanel label1="区域搜索: " :label1value.sync="searchCondition.name" />
     <!-- 按钮 -->
     <div class="panel">
       <Operation @add="add" />
@@ -52,18 +52,18 @@
       <!-- 分页 -->
       <Pagination v-if="totalCount>searchCondition.pageSize" :current-page.sync="searchCondition.pageIndex" :total-count="totalCount" :page-size="searchCondition.pageSize" :total-page="totalPage" @getList="getAllRegion" />
       <!-- 查看详情弹出窗 -->
-      <NodeDetailDialog />
+      <RoginDetailDialog :show-add-dialog.sync="showAddDialog" />
     </div>
   </div>
 </template>
 
 <script>
 import { getRegion } from '@/api'
-import NodeDetailDialog from '@/views/node/components/NodeDetailDialog'
+import RoginDetailDialog from '@/views/node/components/RoginDetailDialog'
 export default {
   name: 'NodeRegion',
   components: {
-    NodeDetailDialog
+    RoginDetailDialog
   },
   data() {
     return {
@@ -80,7 +80,9 @@ export default {
         name: '', // 点位搜索词——点位名称
         regionId: ''// 区域搜索——区域id
       },
-      AllRegionList: []
+      AllRegionList: [],
+      showAddDialog: false,
+      loading: false
 
     }
   },
@@ -91,18 +93,24 @@ export default {
     // 获取所有区域列表
     async getAllRegion() {
       try {
+        this.loading = true
         const res = await getRegion(this.searchCondition)
         this.AllRegionList = res.currentPageRecords
         this.totalCount = +res.totalCount
         this.totalPage = +res.totalPage
 
-        console.log(res)
+        // console.log(res)
       } catch (error) {
         console.log(error)
+      } finally {
+        this.loading = false
       }
     },
     // 查看详情
     getDetail() {
+    },
+    add() {
+      this.showAddDialog = true
     }
   }
 
