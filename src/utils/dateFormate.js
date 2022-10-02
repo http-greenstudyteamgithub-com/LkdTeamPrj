@@ -29,3 +29,12 @@ export function geYearFirstDay(value) {
 export function getWeekBeforeDay(value) {
   return dayjs(value).subtract(6, 'day').format('YYYY-MM-DD')
 }
+export function getDottime(value) { // 2022-10-02 00:00:00
+  var year = value.getFullYear()
+  year = year < 10 ? '0' + year : year
+  var month = value.getMonth() + 1
+  month = month < 10 ? '0' + month : month
+  var dates = value.getDate()
+  dates = dates < 10 ? '0' + dates : dates
+  return `${year}-${month}-${dates} 00:00:00`
+}
