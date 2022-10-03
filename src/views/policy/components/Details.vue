@@ -6,7 +6,7 @@
     <el-dialog title="策略详情" :visible.sync="dialogFormVisible">
       <el-form>
         <!-- 第一个框 -->
-        <el-form-item label="策略名称 :" :label-width="formLabelWidth">九折优惠</el-form-item>
+        <el-form-item label="策略名称 :" :label-width="formLabelWidth">{{ row.policyName }}</el-form-item>
         <!-- 第二个框 -->
         <el-form-item label="策略方案 :" :label-width="formLabelWidth">
           <el-table
@@ -36,7 +36,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-pagination
-          :current-page="pageIndex"
+          :page-index="pageIndex"
           :page-size="pageSize"
           layout="slot, prev,next"
           prev-text="上一页"
@@ -55,6 +55,16 @@
 import { getVmPolicyAPI } from '@/api'
 export default {
   name: 'Details',
+  props: {
+    row: {
+      type: Object,
+      required: true
+    },
+    getTacticsList: {
+      type: Function,
+      required: true
+    }
+  },
   data() {
     return {
       // 总页数
@@ -63,6 +73,7 @@ export default {
       totalCount: 0,
       // 当前页
       pageIndex: 1,
+
       // 当前页的内容
       pageSize: 10,
       // 渲染的列表内容
@@ -80,8 +91,7 @@ export default {
     async inquireFn() {
       this.dialogFormVisible = true
       try {
-        const { currentPageRecords, totalPage, totalCount, pageIndex, pageSize } = await getVmPolicyAPI(this.pageIndex, this.pageSize)
-        console.log(currentPageRecords)
+        const { currentPageRecords, totalPage, totalCount, pageIndex, pageSize } = await getVmPolicyAPI(this.row.policyId, this.pageIndex, this.pageSize)
         this.gridData = currentPageRecords
         this.totalPage = +totalPage
         this.totalCount = +totalCount
@@ -94,7 +104,13 @@ export default {
     headerCellStyle() {
       return 'background-color:#f3f6fb;font-weight:400;'
     },
-    changeFn() {
+    async changeFn() {
+      const { currentPageRecords, totalPage, totalCount, pageIndex, pageSize } = await getVmPolicyAPI(this.row.policyId, this.pageIndex, this.pageSize)
+      this.gridData = currentPageRecords
+      this.totalPage = +totalPage
+      this.totalCount = +totalCount
+      this.pageIndex = +pageIndex
+      this.pageSize = +pageSize
     }
 
   }

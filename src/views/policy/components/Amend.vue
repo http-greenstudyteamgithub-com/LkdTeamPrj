@@ -1,16 +1,17 @@
 <template>
   <div>
     <!-- 按钮 -->
-    <el-button size="medium " type="text" style="color:#86b42b" @click="amendFn">修改</el-button>
+    <el-button size="medium " type="text" style="color:#86b42b" @click="dialogFormVisible = true">修改</el-button>
     <!-- 弹出框 -->
-    <el-dialog title="新增策略" :visible="dialogFormVisible" @close="handleClose">
+    <el-dialog title="修改策略" :visible="dialogFormVisible" @close="handleClose">
       <el-form ref="FormData" :model="FormData" label-width="120px">
         <!-- 第一个输入框 -->
         <el-form-item
           label="策略名称："
+          prop="policyName"
         >
           <el-input
-            v-model="tableData.policyName"
+            v-model="FormData.policyName"
             type="text"
             maxlength="10"
             style="margin-bottom: 15px;"
@@ -20,35 +21,38 @@
           />
         </el-form-item>
         <!-- 第二个输入框 -->
-        <el-form-item label="策略方案：">
-          <el-input-number v-model="tableData.discount" controls-position="right" :min="1" :max="100" class="input1" :label="tableData.discount" @change="handleChange" />
+        <el-form-item label="策略方案：" prop="discount">
+          <el-input-number v-model="FormData.discount" controls-position="right" :min="1" :max="100" class="input1" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button class="quxiao-btn" @click="handleClose">取 消</el-button>
-        <el-button class="queding-btn">确 定</el-button>
+        <el-button class="queding-btn" @click="AmendStrategy">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import { getAmendStrategyAPI } from '@/api'
 export default {
   props: {
-    tableData: {
-      type: Array,
+    row: {
+      type: Object,
       required: true
-
+    },
+    getTacticsList: {
+      type: Function,
+      required: true
     }
   },
 
   data() {
     return {
+      name: '',
+      num: undefined,
       dialogFormVisible: false,
-      FormData: {
-        num: 90,
-        name: ''
-      }
+      FormData: { ...this.row }
     }
   },
   methods: {
@@ -56,10 +60,8 @@ export default {
       this.dialogFormVisible = false
       this.$refs.FormData.resetFields()
     },
-    handleChange() { },
-    amendFn() {
-      this.dialogFormVisible = true
-      console.log(this.tableData.policyName)
+    async AmendStrategy() {
+      await getAmendStrategyAPI(this.row.policyId, this.row.policyName, this.row.discount)
     }
   }
 }

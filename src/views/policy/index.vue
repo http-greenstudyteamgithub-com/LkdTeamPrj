@@ -18,7 +18,7 @@
     <!-- 表单模块 S -->
     <el-card shadow="never">
       <!-- 新建 按钮 -->
-      <addBtn />
+      <addBtn :get-tactics-list="getTacticsList" />
       <el-table
         :data="tableData"
         style="width: 100%;margin-top: 45px;"
@@ -48,13 +48,13 @@
           prop="handle"
           label="操作 "
         >
-          <template>
+          <template slot-scope="{row}">
             <!-- 查询详情按钮 -->
             <div class="btn-content">
-              <Details />
-              <Amend :table-data="tableData" />
+              <Details :row="row" :get-tactics-list="getTacticsList" />
+              <Amend :row="row" :get-tactics-list="getTacticsList" />
 
-              <el-button size="medium " type="text" style="color:#ff5a5a">删除</el-button>
+              <el-button size="medium " type="text" style="color:#ff5a5a" @click="deleteFn">删除</el-button>
             </div>
           </template>
         </el-table-column>
@@ -95,24 +95,25 @@ export default {
     // 策略列表
     async getTacticsList() {
       const res = await getTacticsListAPI()
-      console.log(res)
       this.tableData = res
-      this.discount = res.discount
-      console.log(this.discount)
     },
-    // 策略详情弹出层
-
     handleClose() {
     },
     headerCellStyle() {
       return 'background-color:#f3f6fb;font-weight:400;'
     },
+    // 搜索
     async searthFn() {
       const { currentPageRecords } = await getSearthListAPI(this.pageIndex, this.pageSize, this.input)
       this.tableData = currentPageRecords
       this.input = ''
+    },
+    deleteFn() {
+      this.$notify.error({
+        title: '提示',
+        message: '演示系统，不支持此操作'
+      })
     }
-
   }
 }
 </script>
