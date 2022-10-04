@@ -6,8 +6,8 @@
       <el-option
         v-for="item of optionslist"
         :key="item.value"
-        :label="item.label"
-        :value="item.value"
+        :label="item.name"
+        :value="item.name"
       />
     </el-select>
     <!-- 选择合作商 -->

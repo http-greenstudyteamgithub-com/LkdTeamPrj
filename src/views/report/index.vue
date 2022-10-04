@@ -20,7 +20,7 @@
         <Partner />
         <!-- 选择合作商 -->
         <!-- 日期框 -->
-        <span class="demonstration">  日期：</span>
+        <span class="demonstration"> 日期：</span>
         <el-date-picker
           v-model="value"
           value-format="yyyy-MM-dd"
@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import { getCooperativePartnerAPI } from '@/api'
+import { getCooperativePartnerAPI, getOrderCountAPI, getorderAmountAPI, getTotalBillsAPI } from '@/api'
 import SalesOrder from './components/SalesOrder.vue'
 import WorkOrder from './components/WorkOrder.vue'
 import Partner from './components/Partner.vue'
@@ -114,7 +114,7 @@ export default {
       orderCount: '',
       orderAmount: '',
       totalBill: '',
-      value: [],
+      value: [dayjs(+new Date()).startOf('month').format('YYYY-MM-DD'), dayjs(+new Date()).format('YYYY-MM-DD')],
       pageIndex: 1,
       pageSize: 10,
       totalPage: 0,
@@ -158,11 +158,20 @@ export default {
     // 查询按钮点击事件
     async SearchFn() {
       const res = await getCooperativePartnerAPI(this.value[0], this.value[1], this.pageIndex, this.pageSize)
+      console.log(this.value[0], this.value[1])
       this.FormData = res.currentPageRecords
       this.pageIndex = +res.pageIndex
       this.pageSize = +res.pageSize
       this.totalPage = +res.totalPage
       this.totalCount = +res.totalCount
+      this.start = dayjs(this.value[1]).format('YYYY-MM-DD HH:mm:ss')
+      this.end = dayjs(this.value[0]).format('YYYY-MM-DD HH:mm:ss')
+      const res1 = await getOrderCountAPI(this.end, this.start)
+      this.orderCount = res1
+      const res2 = await getorderAmountAPI(this.end, this.start)
+      this.orderAmount = res2 / 100
+      const res3 = await getTotalBillsAPI(this.end, this.start)
+      this.totalBill = res3 / 100
     },
     // 切换下一页
     nextclick() {
