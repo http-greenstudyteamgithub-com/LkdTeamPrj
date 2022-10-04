@@ -8,21 +8,20 @@
         <!-- 第一个输入框 -->
         <el-form-item
           label="策略名称："
-          prop="policyName"
+          prop="name"
         >
           <el-input
-            v-model="FormData.policyName"
+            v-model="row.policyName"
             type="text"
             maxlength="10"
             style="margin-bottom: 15px;"
             class="input1"
-            placeholder="九折优惠"
             show-word-limit
           />
         </el-form-item>
         <!-- 第二个输入框 -->
-        <el-form-item label="策略方案：" prop="discount">
-          <el-input-number v-model="FormData.discount" controls-position="right" :min="1" :max="100" class="input1" />
+        <el-form-item label="策略方案：">
+          <el-input-number v-model="row.discount" controls-position="right" :min="1" :max="100" class="input1" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -50,7 +49,7 @@ export default {
   data() {
     return {
       name: '',
-      num: undefined,
+      num: '',
       dialogFormVisible: false,
       FormData: { ...this.row }
     }
@@ -61,7 +60,10 @@ export default {
       this.$refs.FormData.resetFields()
     },
     async AmendStrategy() {
-      await getAmendStrategyAPI(this.row.policyId, this.row.policyName, this.row.discount)
+      this.name = this.row.policyName
+      this.num = this.row.discount
+      await getAmendStrategyAPI(this.row.policyId, this.name, this.num)
+      this.handleClose()
     }
   }
 }

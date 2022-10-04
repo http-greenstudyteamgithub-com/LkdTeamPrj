@@ -94,6 +94,8 @@
         next-text="下一页"
         :total="totalCount"
         @current-change="changeFn"
+        @prev-click="prevclick"
+        @next-click="nextclick"
       >
         <span class="totalPage">共{{ totalCount }}条记录 第{{ pageIndex }}/{{ totalPage }}页</span>
       </el-pagination>
@@ -148,9 +150,16 @@ export default {
       this.pageSize = +pageSize
     },
     // 切换下一页
-    async changeFn() {
+    nextclick() {
+      this.pageIndex++
       this.getOrderSearchlist()
     },
+    // 切换上一页
+    prevclick() {
+      this.pageIndex--
+      this.getOrderSearchlist()
+    },
+
     // 点击查询
     async SearchFn() {
       this.startDate = this.value[0]
@@ -163,7 +172,6 @@ export default {
       // this.pageIndex = +pageIndex
       // this.pageSize = +pageSize
       this.orderNo = ''
-      this.value = ''
     }
   }
 }

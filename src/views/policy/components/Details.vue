@@ -42,7 +42,8 @@
           prev-text="上一页"
           next-text="下一页"
           :total="totalCount"
-          @current-change="changeFn"
+          @prev-click="prevclick"
+          @next-click="nextclick"
         >
           <span class="totalPage">共{{ totalCount }}条记录 第{{ pageIndex }}/{{ totalPage }}页</span>
         </el-pagination>
@@ -104,13 +105,13 @@ export default {
     headerCellStyle() {
       return 'background-color:#f3f6fb;font-weight:400;'
     },
-    async changeFn() {
-      const { currentPageRecords, totalPage, totalCount, pageIndex, pageSize } = await getVmPolicyAPI(this.row.policyId, this.pageIndex, this.pageSize)
-      this.gridData = currentPageRecords
-      this.totalPage = +totalPage
-      this.totalCount = +totalCount
-      this.pageIndex = +pageIndex
-      this.pageSize = +pageSize
+    prevclick() {
+      this.pageIndex--
+      this.inquireFn()
+    },
+    nextclick() {
+      this.pageIndex++
+      this.inquireFn()
     }
 
   }
