@@ -24,8 +24,12 @@ export default {
       newarr: []
     }
   },
+  created() {
+    this.active(0)
+  },
   methods: {
     active(i) {
+      this.$store.commit('user/SET_INDEX_TIME', i)
       this.newarr = this.times.filter(item => {
         return item === this.times[i]
       })
@@ -48,14 +52,16 @@ border-radius:9px;
    text-align: center;
     background-color: #fff;
     border-radius: 5px;
-     font-size: 14px;
+     font-size: 12px;
+     font-weight: 700;
      color: #000;
 }
 div{
 text-align: center;
-    padding:2px 5px ;
+    padding:0px 8px ;
     font-size: 12px;
      height: 20px;
+     line-height: 20px;
      color: #999;
     // line-height: 30px;
 }

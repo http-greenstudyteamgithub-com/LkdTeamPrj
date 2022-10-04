@@ -3,7 +3,9 @@
     <el-date-picker
       v-model="value1"
       type="daterange"
-      range-separator="至"
+      value-format="yyyy-MM-dd"
+      range-separator="~"
+      unlink-panels
       start-placeholder="开始日期"
       end-placeholder="结束日期"
     />
@@ -11,63 +13,54 @@
 </template>
 
 <script>
+import { geYearFirstDay, dayFormate, getWeekBeforeDay, getMonthFirstDayByDot } from '@/utils/dateFormate'
 export default {
+  name: 'TimePicker',
   data() {
     return {
-      pickerOptions: {
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
-          }
-        }]
-      },
-      value1: '',
-      value2: ''
+
+      // value1: []
+    }
+  },
+  computed: {
+    value1() {
+      const a = this.$store.state.user.indexTime
+      if (a === 0) {
+        const b = getWeekBeforeDay(new Date())
+        const c = dayFormate(new Date())
+        return [b, c]
+      } else if (a === 1) {
+        const b = getMonthFirstDayByDot(new Date())
+        const c = dayFormate(new Date())
+        return [b, c]
+      } else {
+        const b = geYearFirstDay(new Date())
+        const c = dayFormate(new Date())
+        return [b, c]
+      }
     }
   }
+
 }
+
 </script>
 
- <style lang="scss" scoped>
+ <style lang="scss" >
 
    .el-date-editor.el-input__inner {
     padding: 1px 3px;
     width:20vw;
-    height:  35px;
-    line-height: 35px;
+   height: 26px;
+    line-height: 26px;
+}
  .el-date-editor .el-range__icon {
-    font-size: 17px;
-    margin-left: -5px;
-    color: #C0C4CC;
-    float: left;
-    line-height: 24px;
+    line-height: 23px;
 }
 .el-date-editor .el-range-separator {
     line-height: 22px;
     font-size: 14px;
     width: 5%;
     color: #303133;
-}
 }
 
   </style>

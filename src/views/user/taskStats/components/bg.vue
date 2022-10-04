@@ -2,7 +2,7 @@
   <div
     class="totalcontainer"
     :style="{width:activewidth,
-             background:' '+color+' url('+ bg+') no-repeat right bottom ',}"
+             background:' '+color+' url('+ bg+')  no-repeat  right bottom',}"
   >
     <div class="toptitle">
       <strong>{{ title }}</strong>&nbsp;&nbsp;
@@ -80,9 +80,15 @@ export default {
 <style lang="scss" scoped>
 
 .totalcontainer{
-  min-height: 155px;
+  min-height: 150px;
   padding: 20px;
   border-radius: 20px;
+  .left-box{
+background-color: #e9f3ff;
+background-image: url('~@/assets/common/circle.png'),url('~@/assets/common/car.png');
+background-repeat: no-repeat,no-repeat;
+background-position: 0 0,right bottom;
+  }
   .toptitle{
     // margin: 10px;
     span{
