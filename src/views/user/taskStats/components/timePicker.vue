@@ -18,14 +18,12 @@ export default {
   name: 'TimePicker',
   data() {
     return {
-
-      // value1: []
     }
   },
   computed: {
     value1() {
       const a = this.$store.state.user.indexTime
-      if (a === 0) {
+      if (a === 0) { // 通过时间选择器组件传值
         const b = getWeekBeforeDay(new Date())
         const c = dayFormate(new Date())
         return [b, c]
