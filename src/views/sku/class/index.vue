@@ -100,6 +100,7 @@ export default {
         this.searchCondition.pageSize = +pageSize
         this.totalPage = +totalPage
         this.totalCount = +totalCount
+        this.$store.commit('sku/SET_CLASS', currentPageRecords)
       } catch (error) {
         console.log(error)
       }

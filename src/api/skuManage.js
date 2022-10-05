@@ -40,3 +40,37 @@ export const editClassApi = (classId, newClassName) => {
     }
   })
 }
+
+// 商品搜索
+export const getShopSearchListApi = (params) => {
+  return request({
+    url: '/api/vm-service/sku/search',
+    params
+  })
+}
+
+// 新增商品
+export const newProductApi = ({ skuName, price, brandName, unit, classId, skuImage
+}) => {
+  return request({
+    url: '/api/vm-service/sku',
+    method: 'POST',
+    data: {
+      skuName, price, brandName, unit, classId, skuImage
+    }
+  })
+}
+
+// 上传图片
+export const uploadImgApi = (fileName) => {
+  return request({
+    url: '/api/vm-service/sku/fileUpload',
+    method: 'POST',
+    data: {
+      fileName
+    }
+    // headers: {
+    //   'Content-Type': 'multipart/form-data'
+    // }
+  })
+}
