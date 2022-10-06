@@ -1,6 +1,6 @@
 <template>
   <div class="addnodediaglog">
-    <el-dialog title="新增区域" :visible.sync="showAddDialog" width="42%">
+    <el-dialog title="新增区域" :visible="showAddDialog" width="42%" @close="handerClose">
       <el-form :model="form" :rules="rules">
         <el-form-item prop="name" label="区域名称：" :label-width="formLabelWidth">
           <!-- <el-input v-model="form.name" autocomplete="off" /> -->
@@ -25,14 +25,15 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button>取 消</el-button>
-        <el-button type="primary">确 定</el-button>
+        <el-button @click="handerClose">取 消</el-button>
+        <el-button type="primary" @click="checkRogin">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import { addRegion } from '@/api'
 export default {
   props: {
     showAddDialog: {
@@ -50,6 +51,23 @@ export default {
       rules: {
         name: [{ required: true, message: '请输入', trigger: 'blur' }],
         remark: [{ required: true, message: '请输入', trigger: 'blur' }]
+      }
+    }
+  },
+  methods: {
+    handerClose() {
+      this.$parent.showAddDialog = false
+      this.form = {
+        name: '',
+        remark: ''
+      }
+    },
+    async checkRogin() {
+      try {
+        await addRegion(this.form)
+        this.$parent.showAddDialog = false
+      } catch (error) {
+        console.log(error)
       }
     }
   }

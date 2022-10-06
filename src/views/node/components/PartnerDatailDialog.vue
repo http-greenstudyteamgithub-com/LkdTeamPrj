@@ -1,6 +1,6 @@
 <template>
   <div class="addnodediaglog">
-    <el-dialog title="新增合作商" :visible.sync="showAddDialog" width="42%">
+    <el-dialog title="新增合作商" :visible="showAddDialog" width="42%" @close="handerClose">
       <el-form :model="form" :rules="rules">
         <el-form-item prop="name" label="合作商名称：" :label-width="formLabelWidth">
           <!-- <el-input v-model="form.name" autocomplete="off" /> -->
@@ -33,15 +33,6 @@
           />
         </el-form-item>
         <el-form-item prop="ratio" label="分成比例：" :label-width="formLabelWidth">
-          <!-- <el-input
-            v-model="form.ratio"
-            type="textarea"
-            placeholder="请输入备注（不超过40个字）"
-            maxlength="40"
-            autocomplete="off"
-            show-word-limit
-            :rows="3"
-          /> -->
           <el-input-number v-model="form.ratio" controls-position="right" :min="1" :max="100" />
         </el-form-item>
         <el-form-item prop="account" label="账号：" :label-width="formLabelWidth">
@@ -102,6 +93,11 @@ export default {
         password: [{ required: true, message: '请输入', trigger: 'blur' }]
 
       }
+    }
+  },
+  methods: {
+    handerClose() {
+      this.$parent.showAddDialog = false
     }
   }
 

@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 搜索通栏 -->
-    <SearchPanel label1="区域搜索: " :label1value.sync="searchCondition.name" />
+    <SearchPanel label1="合作商搜索: " :label1value.sync="searchCondition.name" />
     <!-- 按钮 -->
     <div class="panel">
       <Operation @add="add" />
@@ -67,7 +67,7 @@
       </el-table>
       <!-- 分页 -->
       <Pagination v-if="totalCount>searchCondition.pageSize" :current-page.sync="searchCondition.pageIndex" :total-count="totalCount" :page-size="searchCondition.pageSize" :total-page="totalPage" @getList="getAllRegion" />
-      <!-- 查看详情弹出窗 -->
+      <!-- 弹出窗 -->
       <PartnerDatailDialog :show-add-dialog.sync="showAddDialog" />
     </div>
   </div>

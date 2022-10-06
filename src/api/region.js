@@ -38,3 +38,49 @@ export const getNode = ({ pageIndex, pageSize, name, regionId }) => {
     params: obj
   })
 }
+/**
+ * 区域详情
+ * @param {*} regionId
+ * @returns Promise
+ */
+export const getNodeRegion = (regionId) => {
+  return request({
+    url: `/api/vm-service/region/${regionId}`
+  })
+}
+
+/**
+ * 点位详情
+ * @param {*} id
+ * @returns Promise
+ */
+export const getNodeStatus = (regionId) => {
+  return request({
+    url: `/api/vm-service/node/vmList/${regionId}`
+  })
+}
+/**
+ * 删除区域
+ * @param {*} regionId
+ * @returns
+ */
+export const delRegion = (regionId) => {
+  return request({
+    url: `/api/vm-service/region/${regionId}`,
+    method: 'DELETE'
+  })
+}
+
+/**
+ * 新增区域
+ * @param {*} param0
+ * @returns
+ */
+export const addRegion = (regionName, remark) => {
+  return request({
+    url: '/api/vm-service/region',
+    method: 'POST',
+    data: regionName, remark
+
+  })
+}

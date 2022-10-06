@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 搜索通栏 -->
-    <SearchPanel label1="区域搜索: " :label1value.sync="searchCondition.name" />
+    <SearchPanel label1="点位搜索: " :label1value.sync="searchCondition.name" />
     <!-- 按钮 -->
     <div class="panel">
       <Operation @add="add" />
@@ -23,16 +23,12 @@
           min-width="28%"
         />
         <el-table-column
-          prop="nodeCount"
+          prop="region.name"
           label="所在区域"
           min-width="28%"
-        >
-          <!-- <template slot-scope="{row}">
-            <span style="margin-left: 10px">{{ row.taskType.typeName }}</span>
-          </template> -->
-        </el-table-column>
+        />
         <el-table-column
-          prop="remark"
+          prop="businessType.name"
           label="商圈类型"
           min-width="26%"
         />
@@ -41,7 +37,8 @@
           label="合作商"
           min-width="25%"
         /><el-table-column
-          prop="remark"
+
+          prop="addr"
           label="详细地址"
           min-width="25%"
         />
@@ -51,7 +48,7 @@
         >
           <template slot-scope="{row}">
             <el-button class="btn" @click="getDetail(row)">查看详情</el-button>
-            <el-button class="editbtn" type="text" size="small">修改</el-button>
+            <el-button class="editbtn" type="text" size="small" @click="editNode(row)">修改</el-button>
             <el-button class="delbtn" type="text" size="small">删除</el-button>
 
           </template>
@@ -60,19 +57,50 @@
       </el-table>
       <!-- 分页 -->
       <Pagination v-if="totalCount>searchCondition.pageSize" :current-page.sync="searchCondition.pageIndex" :total-count="totalCount" :page-size="searchCondition.pageSize" :total-page="totalPage" @getList="getAllNode" />
-      <!-- 查看详情弹出窗 -->
-      <!-- <NodeDetailDialog :show-add-dialog.sync="showAddDialog" /> -->
+      <!-- 弹出窗 -->
+      <NodeDatailDialog ref="edit" :all-node-list="AllNodeList" :show-add-dialog.sync="showAddDialog" />
     </div>
+    <!-- 查看详情 -->
+
+    <el-dialog class="checkdialog" title="点位详情" :visible.sync="dialogFormVisible" width="42%">
+
+      <el-table :data="NodeStausList" :header-cell-style="{background:'#f5f7fa',color:'#737674',fontWeight:400}" style="width: 100%">
+        <el-table-column
+          type="index"
+          label="序号"
+        />
+        <el-table-column
+          prop="innerCode"
+          label="机器编号"
+          min-width="40%"
+        />
+        <el-table-column
+          prop="vmStatus"
+          label="设备状态"
+          min-width="40%"
+        >
+          <template slot-scope="{row}">
+            <span>{{ row.vmStatus === 0?'未投放':'运营' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="lastSupplyTime"
+          label="最后一次供货时间"
+          min-width="40%"
+        />
+      </el-table>
+
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getNode } from '@/api'
-// import NodeDetailDialog from '@/views/node/components/NodeDetailDialog'
+import { getNode, getNodeStatus } from '@/api'
+import NodeDatailDialog from '@/views/node/components/NodeDatailDialog'
 export default {
   name: 'NodeRegion',
   components: {
-
+    NodeDatailDialog
   },
   data() {
     return {
@@ -91,8 +119,9 @@ export default {
       },
       AllNodeList: [],
       showAddDialog: false,
-      loading: false
-
+      loading: false,
+      dialogFormVisible: false,
+      NodeStausList: {}
     }
   },
   created() {
@@ -108,7 +137,7 @@ export default {
         this.totalCount = +res.totalCount
         this.totalPage = +res.totalPage
 
-        // console.log(res)
+        // console.log(this.AllNodeList)
       } catch (error) {
         console.log(error)
       } finally {
@@ -117,7 +146,22 @@ export default {
     },
     add() {
       this.showAddDialog = true
+    },
+    async  getDetail(row) {
+      try {
+        this.dialogFormVisible = true
+        this.NodeStausList = await getNodeStatus(row.id)
+        // console.log(this.NodeStausList)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    editNode(row) {
+      this.showAddDialog = true
+      this.$refs.edit.formdata = row
+      console.log(row)
     }
+
   }
 
 }
