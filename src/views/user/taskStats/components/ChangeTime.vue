@@ -29,7 +29,7 @@ export default {
   },
   methods: {
     active(i) {
-      this.$store.commit('user/SET_INDEX_TIME', i)
+      this.$emit('change', i)
       this.newarr = this.times.filter(item => {
         return item === this.times[i]
       })

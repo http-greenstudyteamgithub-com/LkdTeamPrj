@@ -16,8 +16,11 @@
           <el-table-column
             label="操作"
           >
-            <span class="edit">修改</span>&nbsp;&nbsp;
-            <span class="delete">删除</span>
+            <template slot-scope="{row}">
+              <span class="edit" @click="edit(row)">修改</span>&nbsp;&nbsp;
+              <span class="delete">删除</span>
+            </template>
+
           </el-table-column>
         </template>
 
@@ -37,7 +40,6 @@
       :is-show-dialog.sync="isShowDialog
       "
     />
-    <!-- 表格 -->
   </div>
 </template>
 
@@ -121,6 +123,11 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+    edit(row) {
+      this.isShowDialog = true
+      this.$refs.addRole.form = { ...row }
+      console.log(row)
     },
     initUserResult() { // 新建时初始化数据
       this.page = {

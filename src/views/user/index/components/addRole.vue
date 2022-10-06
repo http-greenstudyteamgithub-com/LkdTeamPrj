@@ -11,7 +11,7 @@
       <el-form-item label="人员名称:" prop="userName">
         <el-input v-model="form.userName" placeholder="请输入" />
       </el-form-item>
-      <el-form-item label="角色:" prop="roleName">
+      <el-form-item label="角色:" prop="role.roleName">
         <el-select v-model="form.role.roleName" placeholder="请选择">
           <el-option label="运营员" value="运营员" />
           <el-option label="维修员" value="维修员" />
@@ -21,7 +21,7 @@
         <el-input v-model="form.mobile" placeholder="请输入" />
       </el-form-item>
       <el-form-item label="负责区域:" prop="regionName">
-        <el-select v-model="form.regionName" filterable placeholder="请选择" @change="onchange">
+        <el-select v-model="form.regionName" filterable placeholder="请选择">
           <el-option
             v-for="item in options"
             :key="item.value"
@@ -33,11 +33,12 @@
       <el-form-item label="头像:" prop="image">
         <el-upload
           class="avatar-uploader"
-          action="#"
+          action="http://likede2-admin.itheima.net/likede/api/vm-service/sku/fileUpload"
+          name="fileName"
+          :headers="headers"
           :show-file-list="false"
           :on-success="handleAvatarSuccess"
           :before-upload="beforeAvatarUpload"
-          @change="updatefile"
         >
           <img v-if="form.image" :src="form.image" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon" />
@@ -50,15 +51,15 @@
         </el-checkbox-group>
       </el-form-item>
       <el-form-item>
+        <el-button type="warning" plain @click="cancel">取消</el-button>
         <el-button v-loading="loading" type="warning" @click="onSubmit">确定</el-button>
-        <el-button type="warning" plain>取消</el-button>
       </el-form-item>
     </el-form>
   </el-dialog>
 </template>
 
 <script>
-import { getregionList, updateFile } from '@/api'
+import { getregionList, addUserInfo, updateRole } from '@/api'
 export default {
   name: 'AddRole',
   props: {
@@ -71,13 +72,18 @@ export default {
     return {
       form: {
         userName: '',
+        roleId: '',
         regionName: '',
+        regionId: '',
         mobile: '',
         image: '',
         role: {
           roleName: ''
         },
         status: ''
+      },
+      headers: {
+        Authorization: this.$store.state.user.userToken
       },
       rules: {
         userName: [{
@@ -91,11 +97,14 @@ export default {
           message: '不能超过5个字',
           trigger: 'blur'
         }],
-        roleName: [{
-          required: true,
-          message: '不能为空嗷~',
-          trigger: 'change'
-        }],
+        role: {
+          roleName: [{
+            required: true,
+            message: '不能为空嗷~',
+            trigger: 'change'
+          }]
+        },
+
         mobile: [{
           required: true,
           message: '不能为空嗷~',
@@ -125,18 +134,15 @@ export default {
         }]
 
       },
-      // headers: {
-      //   Authorization: this.$store.state.user.userToken,
-      //   Accept: ['application/json', 'text/plain', '*/*']
-      // },
       loading: false,
       ischecked: false,
+      imageUrl: '',
       options: [] // 负责区域
     }
   },
   computed: {
     title() {
-      return '新增人员'
+      return this.form.id ? '编辑人员' : '新增人员'
     }
   },
   created() {
@@ -146,18 +152,23 @@ export default {
     cancel() {
       this.$emit('update:isShowDialog', false)
       this.$refs.roleDialogForm.resetFields() // 清除表单项里的数据
-    //   this.form= {
-    //     name: '',
-    //     description: ''
-    //   }
+      this.form = {
+        userName: '',
+        roleId: '',
+        regionName: '',
+        regionId: '',
+        mobile: '',
+        image: '',
+        role: {
+          roleName: ''
+        },
+        status: ''
+      }
     },
-    async  updatefile(file) {
-      console.log(file)
-      await updateFile(file.file)
-    },
-    handleAvatarSuccess(res, file) {
+    async handleAvatarSuccess(res, file) {
       console.log(res, file)
-      this.form.image = URL.createObjectURL(file.raw)
+      this.imageUrl = URL.createObjectURL(file.raw)
+      this.form.image = res
     },
     beforeAvatarUpload(file) {
       const isJPG = file.type === 'image/jpeg'
@@ -171,18 +182,32 @@ export default {
       if (!isLt100KB) {
         this.$message.error('上传头像图片大小不能超过 100kb!')
       }
+
       return isJPG || isPNG && isLt100KB
     },
     async getregionList() {
-      const data = await getregionList()
+      const data = await getregionList() // 点位数据的处理
+      console.log(data)
       const newdata = JSON.parse(JSON.stringify(data).replace(/name/gi, 'value').replace(/remark/gi, 'label'))
       this.options = newdata.currentPageRecords
     },
-    onchange() {
-
-    },
-    onSubmit() {
-
+    async onSubmit() {
+      try {
+        await this.$refs.roleDialogForm.validate() // 先校验表单
+        const a = this.options.filter(item => {
+          return item.label === this.form.regionName
+        })
+        this.form.regionId = a[0].id
+        this.form.roleId = this.form.role.roleName === '运营员' ? 2 : 3
+        console.log(this.form, a[0].id)
+        this.form.id ? await updateRole(this.form) : await addUserInfo(this.form)
+        this.$message.success(this.form.id ? '编辑成功' : '上传人员信息成功')
+        this.$parent.initUserResult()
+        // console.log(this.$parent)
+        this.cancel() // 关闭弹窗 清空数据
+      } catch (error) {
+        this.$message.error('上传人员信息失败')
+      }
     }
   }
 }

@@ -31,12 +31,12 @@
           <el-col :span="12">
             <el-row type="flex" class="row-bg" justify="space-between" align="middle">
               <el-col :span="12"> <time-picker /></el-col>
-              <el-col :span="7"> <change-time /></el-col>
-
+              <el-col :span="7"> <change-time @change="change" /></el-col>
             </el-row>
           </el-col>
 
         </el-row>
+        <div class="compute-statusText">暂无数据</div>
       </div></el-col>
       <el-col :span="6.5">
         <div class="compute-rank">
@@ -48,8 +48,8 @@
             <el-col :span="4" />
             <el-col :span="14">  <change-time :times="time1" /></el-col>
             <el-col :span="4" />
-
           </el-row>
+          <div class="compute-rankText">暂无数据</div>
         </div></el-col>
     </el-row>
   </div>
@@ -99,6 +99,9 @@ export default {
       this.runData = data[0]
       this.repairData = data[1]
       console.log(data[0], data[1])
+    },
+    change(i) {
+      this.$store.commit('user/SET_INDEX_TIME', i)
     }
   }
 }
@@ -116,13 +119,20 @@ export default {
     width: 22vw;
      background:#fff url('~@/assets/common/empty.png') no-repeat center;
     margin-right: 20px;
-    // .all{
-    //   font-size: 14px;
-    // }
+   .compute-rankText{
+      font-size: 12px;
+      text-align: center;
+      margin-top: 250px;
+    }
   }
   .compute-status{
      background:#fff url('~@/assets/common/empty.png') no-repeat center;
-    width: 60vw;;
+    width: 60vw;
+    .compute-statusText{
+          font-size: 12px;
+      text-align: center;
+      margin-top: 285px;
+    }
   }
 }
 </style>

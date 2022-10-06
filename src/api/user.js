@@ -35,13 +35,44 @@ export const getuserlist = (params) => {
     params
   })
 }
-export const updateFile = () => {
+
+/**
+ *
+ * @data {file}
+ * @returns  上传图片
+ */
+export const updateFile = (fileName) => {
   return request({
     url: '/api/vm-service/sku/fileUpload',
-    method: 'POST'
+    method: 'POST',
+    data: {
+      fileName
+    }
+  })
+}
+/**
+ *
+ * @data {data}
+ * @returns  上传信息
+ */
+export const addUserInfo = (data) => {
+  return request({
+    url: '/api/user-service/user',
+    method: 'POST',
+    data
   })
 }
 
+/**
+ * 修改角色
+ * ***/
+export function updateRole(data) {
+  return request({
+    url: `/api/user-service/user/${data.id}`,
+    data,
+    method: 'put'
+  })
+}
 /**
  *
  * @param {page,pagelist} params
