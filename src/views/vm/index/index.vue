@@ -223,7 +223,20 @@ export default {
     padding-left: 17px;
     background-color: #fff;
   }
+  ::v-deep .selectWidth{
+    width: 80%;
+    margin-bottom: 20px;
+  }
+  ::v-deep .el-dialog {
+    width: 50%;
+  }
 
+  ::v-deep .el-dialog__footer{
+    text-align: center;
+  }
+  ::v-deep .el-dialog{
+    border-radius: 10px;
+  }
 </style>
 
 <style lang="scss">
@@ -285,16 +298,6 @@ export default {
     padding: 0;
     border: none;
   }
-  .selectWidth{
-    width: 80%;
-    margin-bottom: 20px;
-  }
-  .el-dialog {
-    width: 50%;
-  }
 
-  .el-dialog__footer{
-    text-align: center;
-  }
 </style>
 

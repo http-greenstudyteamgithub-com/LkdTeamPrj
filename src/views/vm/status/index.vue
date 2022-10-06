@@ -73,6 +73,48 @@
     </el-table>
     <!-- 分页 -->
     <Pagination v-if="totalCount<data.pageSize" :current-page.sync="data.pageIndex" :total-count="page.totalCount" :page-size="data.pageSize" :total-page="page.totalPage" @getList="taskSearchResult" />
+    <!-- 设备状态 -->
+    <el-dialog title="设备详情" :visible.sync="dialogFormVisible">
+      <div style="width: 579px; margin: 0px auto;">
+        <el-row :gutter="20" class="sku-stats" type="flex" justify="space-around" align="middle" style="margin-left: -10px; margin-right: -10px;">
+          <el-col :span="6">
+            <span>销售量:</span>
+            <span>1112</span>
+            <span>&nbsp;个</span>
+          </el-col>
+          <el-col :span="6">
+            <span>销售额:</span>
+            <span>2564.18</span>
+            <span>&nbsp;元</span>
+          </el-col>
+          <el-col :span="6">
+            <span>补货次数:</span>
+            <span>0</span>
+            <span>&nbsp;次</span>
+          </el-col>
+          <el-col :span="6">
+            <span>维修次数:</span>
+            <span>0</span>
+            <span>&nbsp;次</span>
+          </el-col>
+        </el-row>
+        <div class="sku-title">
+          商品销量（月）
+        </div>
+        <el-row class="sku-list">
+          <el-col :span="6">
+            <el-row class="sku-item">
+              <el-col :span="14">
+                <div title="100橙汁自然纯" class="sku-name">100橙汁自然纯</div>
+              </el-col>
+              <el-col :span="10">
+                :194
+              </el-col>
+            </el-row>
+          </el-col>
+        </el-row>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -100,7 +142,8 @@ export default {
         totalCount: 0,
         totalPage: 0
       },
-      search: {}
+      search: {},
+      dialogFormVisible: true
     }
   },
   created() {
@@ -143,6 +186,44 @@ export default {
     padding-left: 17px;
     background-color: #fff;
   }
+  ::v-deep .el-dialog{
+    margin-top: 15vh;
+    width: 630px;
+  }
+  ::v-deep .el-dialog {
+    border-radius: 10px;
+}
+  ::v-deep .el-dialog__body{
+    padding: 20px 20px 30px;
+    color: #666;
+    font-size: 14px;
+    word-break: break-all;
+}
+.sku-stats{
+  height: 54px;
+    background: rgba(227,233,245,.39);
+    text-align: center;
+}
+.sku-title{
+  margin: 20px 0 12px 6px;
+}
+.sku-list{
+    border-top: 1px solid #d8dde3;
+    border-left: 1px solid #d8dde3;
+
+    .sku-item{
+    padding: 0 10px;
+    line-height: 40px;
+    border-right: 1px solid #d8dde3;
+    border-bottom: 1px solid #d8dde3;
+
+    .sku-name{
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+}
+}
 
 </style>
 
