@@ -33,8 +33,8 @@
         />
       </el-form-item>
       <el-form-item label="商品类型" prop="skuClass.className" :rules="[{required: true,message: '必填',trigger: 'blur'}]">
-        <el-select v-model="ruleForm.skuClass" placeholder="请选择">
-          <el-option v-for="(item,index) in classList" :key="index" :value="item.classId" :label="item.className" />
+        <el-select v-model="ruleForm.skuClass.classId" placeholder="请选择">
+          <el-option v-for="(item) in classList" :key="item.classId" :value="item.classId" :label="item.className" />
           <!-- <el-option label="区域二" value="beijing" /> -->
         </el-select>
       </el-form-item>
@@ -58,7 +58,7 @@
           :before-upload="beforeAvatarUpload"
           name="fileName"
         >
-          <img v-if="ruleForm.imageUrl" :src="ruleForm.imageUrl" class="avatar">
+          <img v-if="ruleForm.skuImage" :src="ruleForm.skuImage" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon" />
           <div slot="tip" class="el-upload__tip">支持扩展名：jpg、png,文件不得大于100kb</div>
         </el-upload>
@@ -72,12 +72,13 @@
 </template>
 
 <script>
+// import { skuClassSearchApi } from '@/api'
 export default {
   name: 'AddShop',
   props: {
     dialogVisible: {
       type: Boolean,
-      default: false
+      default: true
     }
   },
   data() {
@@ -105,6 +106,7 @@ export default {
   methods: {
     closeDialog() {
       this.$emit('update:dialogVisible', false)
+      this.$refs.ruleForm.resetFields()
     },
     confirmBtn() {
       console.log(111222)
@@ -113,7 +115,7 @@ export default {
         skuImage: this.skuImage,
         brandName: this.ruleForm.brandName,
         price: +this.ruleForm.price,
-        classId: this.ruleForm.classId,
+        classId: +this.ruleForm.skuClass.classId,
         unit: this.ruleForm.unit
       }
       this.$emit('confirmFn', addObj)
@@ -123,7 +125,7 @@ export default {
     handleAvatarSuccess(res, file) {
       // console.log(res)
       this.skuImage = res
-      this.ruleForm.imageUrl = URL.createObjectURL(file.raw)
+      this.ruleForm.skuImage = URL.createObjectURL(file.raw)
     },
     async beforeAvatarUpload(file) {
       console.log(456)
@@ -138,6 +140,9 @@ export default {
       }
       return isJPG && isLt2M
     }
+    // async skuClassSearch() {
+
+    // }
   }
 }
 

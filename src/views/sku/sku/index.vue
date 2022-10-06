@@ -64,7 +64,13 @@
       </el-table>
       <!-- 新建弹窗 -->
       <AddShop
+        ref="addshop"
         :dialog-visible.sync="dialogVisible"
+        @confirmFn="confirmFn"
+      />
+      <!-- 导入数据弹窗 -->
+      <upload-dig
+        :dialog-visible2.sync="dialogVisible2"
         @confirmFn="confirmFn"
       />
     </div>
@@ -81,14 +87,15 @@
 </template>
 
 <script>
-import { getShopSearchListApi, newProductApi } from '@/api'
+import { getShopSearchListApi, newProductApi, editShopApi } from '@/api'
 import Operation from '@/components/Operation'
 import AddShop from './component/AddShop.vue'
 import Pagination from '@/components/Pagination'
+import uploadDig from './component/uploadDig.vue'
 export default {
   name: 'Sku',
   components: {
-    Operation, AddShop, Pagination
+    Operation, AddShop, Pagination, uploadDig
   },
   data() {
     return {
@@ -100,15 +107,17 @@ export default {
         skuName: null,
         classId: null
       },
+      currentRow: {},
       totalPage: 1,
       totalCount: 0,
       dialogVisible: false,
+      dialogVisible2: false,
       currentPageRecords: [] // 商品数据
     }
   },
   computed: {
     // label1value() {
-    //   return this.classId ? '修改商品' : '新增商品'
+    //   return this.skuId ? '修改商品' : '新增商品'
     // }
   },
   created() {
@@ -137,19 +146,29 @@ export default {
       console.log('add')
       this.dialogVisible = true
     },
-    editClass() {},
+    editClass(row) {
+      this.currentRow = row
+      this.$refs.addshop.ruleForm = row
+      // console.log(this.$refs.addshop.ruleForm)
+      this.dialogVisible = true
+    },
     async confirmFn(addObj) {
       console.log('fff')
       try {
-        const res = await newProductApi(addObj)
-        console.log(res)
+        if (addObj.skuName) {
+          await editShopApi({ ...addObj, skuId: +this.currentRow.skuId })
+        } else {
+          const res = await newProductApi(addObj)
+          console.log(res)
+        }
       } catch (error) {
         console.log(error)
       }
     },
     // 导入数据
     moreOperation() {
-      console.log('导入数据')
+      this.dialogVisible2 = true
+      // console.log('导入数据')
     }
 
   }

@@ -74,3 +74,19 @@ export const uploadImgApi = (fileName) => {
     // }
   })
 }
+
+// 商品数据导入
+export const shopDataImportApi = () => {
+  return request({
+    url: '/api/vm-service/sku/upload',
+    method: 'POST'
+  })
+}
+
+export const editShopApi = (data) => {
+  return request({
+    url: `/api/vm-service/sku/${data.skuId}`,
+    method: 'PUT',
+    data
+  })
+}
