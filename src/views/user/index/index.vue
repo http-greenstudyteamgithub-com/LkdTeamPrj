@@ -18,7 +18,7 @@
           >
             <template slot-scope="{row}">
               <span class="edit" @click="edit(row)">修改</span>&nbsp;&nbsp;
-              <span class="delete">删除</span>
+              <span class="delete" @click="$message.warning('系统操作，不能删除')">删除</span>
             </template>
 
           </el-table-column>

@@ -203,7 +203,6 @@ export default {
         this.form.id ? await updateRole(this.form) : await addUserInfo(this.form)
         this.$message.success(this.form.id ? '编辑成功' : '上传人员信息成功')
         this.$parent.initUserResult()
-        // console.log(this.$parent)
         this.cancel() // 关闭弹窗 清空数据
       } catch (error) {
         this.$message.error('上传人员信息失败')
