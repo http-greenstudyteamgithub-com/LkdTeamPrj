@@ -59,12 +59,22 @@
           prop="ratio"
           label="分成比例"
           width="245"
-        />
+        >
+          <template slot-scope="{row}">
+            {{ row.ratio +'%' }}
+
+          </template>
+        </el-table-column>
         <el-table-column
           prop="orderTotalMoney"
           label="收入(元)"
           width="245"
-        />
+        >
+          <template slot-scope="{row}">
+            {{ '+'+row.orderTotalMoney / 100 }}
+
+          </template>
+        </el-table-column>/>
         <el-table-column
           prop="orderCount"
           label="笔数"
@@ -74,7 +84,11 @@
           prop="totalBill"
           label="分成金额(元)"
           width="245"
-        />
+        >
+          <template slot-scope="{row}">
+            {{ '+'+row.totalBill / 100 }}
+
+          </template></el-table-column>
       </el-table>
       <!-- 表单区域 -->
       <el-pagination

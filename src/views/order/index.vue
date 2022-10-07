@@ -54,7 +54,11 @@
           prop="price"
           label="订单金额(元)"
           width="220"
-        >{{ '4.5' }}</el-table-column>
+        >
+          <template slot-scope="{row}">
+            {{ row.price / 100 }}
+
+          </template></el-table-column>
         <el-table-column
           prop="innerCode"
           label="设备编号"
@@ -93,7 +97,6 @@
         prev-text="上一页"
         next-text="下一页"
         :total="totalCount"
-        @current-change="changeFn"
         @prev-click="prevclick"
         @next-click="nextclick"
       >
