@@ -67,13 +67,25 @@
       </el-row>
     </el-dialog>
     <!-- 补货清单 -->
-    <GoodsDialog :show-goods-dialog.sync="showGoodsDialog" />
+    <GoodsDialog ref="goodsDialog" :is-show-button="true" :header-columns="headerColumns" :show-goods-dialog.sync="showGoodsDialog" :table-data="addGoodsDetails" @btnConfirm="confirmAddGoods">
+      <el-table-column
+        slot="fullNum"
+        min-width="10%"
+        show-overflow-tooltip
+        label="补满数量"
+      >
+        <template slot-scope="{row}">
+          <div v-if="row.sku.skuName ==='-'">货道暂无商品</div>
+          <el-input-number v-else v-model="row.expectCapacity" controls-position="right" :min="1" :max="row.expectCapacity" />
+        </template>
+      </el-table-column>
+    </GoodsDialog>
   </div>
 </template>
 
 <script>
 import GoodsDialog from './goodsDialog.vue'
-import { getTaskType, getOperatorListByInnderCode, createTask } from '@/api'
+import { getTaskType, getOperatorListByInnderCode, createTask, getChannelList } from '@/api'
 export default {
   name: 'AddTaskDialog',
   components: {
@@ -109,7 +121,32 @@ export default {
       taskTypeList: [], // 工单类型
       operatorList: [], // 运营人员
       confirmLoading: false,
-      showGoodsDialog: false// 显示补货清单
+      showGoodsDialog: false, // 显示补货清单
+      addGoodsDetails: [], // 获取售货机货道详情
+      headerColumns: [{
+        label: '货道编号',
+        prop: 'channelCode',
+        minWidth: '10%'
+      },
+      {
+        label: '商品名称',
+        prop: 'sku.skuName',
+        minWidth: '10%'
+      },
+      {
+        label: '当前数量',
+        prop: 'currentCapacity',
+        minWidth: '10%'
+      },
+      {
+        label: '还可添加',
+        prop: 'maxCapacity',
+        minWidth: '10%'
+      },
+      {
+        slot: 'fullNum'
+      }
+      ]
     }
   },
   watch: {
@@ -117,10 +154,12 @@ export default {
       async  handler(newValue) {
         if (newValue.length > 0) {
           try {
+            // 获取运营人员列表
             const res = await getOperatorListByInnderCode(newValue)
             if (res) {
               this.operatorList = res
             }
+            // 获取
           } catch (error) {
             console.log(error)
           }
@@ -137,7 +176,6 @@ export default {
       // 清除校验 重置表单项
       this.$refs.createTaskForm.resetFields()
       // 相关信息置空
-      // this.taskTypeList = []
       this.operatorList = []
     },
     async  btnConfirm() {
@@ -163,22 +201,50 @@ export default {
     async getTaskType() {
       if (this.path === '/task/business') {
         const res = await getTaskType()
-        this.taskTypeList = res.find(item => item.type === 2)
+        this.taskTypeList = res.filter(item => item.type === 2)
       } else {
         const res = await getTaskType()
         this.taskTypeList = res.filter(item => item.type !== 2)
         console.log(this.createTaskForm.taskTypeList)
       }
     },
-    // 增加补货清单
-    async  getReplenishmentList() {
-      this.$refs.createTaskForm.validateField('innerCode', (errorMessage) => {
-        console.log(errorMessage)
+    // 获取补货清单
+    getReplenishmentList() {
+      this.$refs.createTaskForm.validateField('innerCode', async(errorMessage) => {
         const valid = errorMessage === ''
         if (valid) {
+          // 发请求
+          const res = await getChannelList(this.createTaskForm.innerCode)
+          console.log(res)
+          this.addGoodsDetails = res.map(item => {
+            item.expectCapacity = item.maxCapacity
+            if (item.sku === null) {
+              item.sku = {}
+              item.sku.skuName = '-'
+              item.currentCapacity = '-'
+              item.maxCapacity = '-'
+            }
+            return item
+          })
+          console.log(this.addGoodsDetails)
+          // 展示弹窗
           this.showGoodsDialog = true
         }
       })
+    },
+    // 确认补货数量
+    confirmAddGoods() {
+      // console.log('确认补货数量')
+      // console.log(this.addGoodsDetails)
+      const details = this.addGoodsDetails.filter(item => item.skuId !== '0')
+      console.log(details)
+      this.createTaskForm.details = details.map(item => {
+        item.skuName = item.sku.skuName
+        item.skuImage = item.sku.skuImage
+        return item
+      })
+      // console.log(this.createTaskForm.details)
+      this.showGoodsDialog = false
     }
   }
 }
