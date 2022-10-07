@@ -9,8 +9,8 @@
       <Table :header-columns="headerColumns" :table-data="tableData" :loading="loading ">
         <template #time>
           <el-table-column
-            min-width="10%"
-            show-overflow-tooltip
+            min-width="15%"
+            :show-overflow-tooltip="true"
             label="创建日期"
           >
             <template slot-scope="{row}">

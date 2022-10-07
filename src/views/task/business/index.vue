@@ -62,7 +62,7 @@
         />
         <el-table-column
           label="创建日期"
-          min-width="10%"
+          min-width="15%"
         >
           <template slot-scope="{row}">
             <span style="margin-left: 10px">{{ row.createTime |dayFormateFilter() }}</span>
