@@ -57,9 +57,9 @@
         >
           <template slot-scope="{row}">
             <el-button class="changepwd" type="text" size="small">重置密码</el-button>
-            <el-button class="btn" @click="getDetail(row)">查看详情</el-button>
-            <el-button class="editbtn" type="text" size="small">修改</el-button>
-            <el-button class="delbtn" type="text" size="small">删除</el-button>
+            <el-button class="btn" @click="checkPartner(row)">查看详情</el-button>
+            <el-button class="editbtn" type="text" size="small" @click="editPartner(row)">修改</el-button>
+            <el-button class="delbtn" type="text" size="small" @click="delPartner(row)">删除</el-button>
 
           </template>
 
@@ -68,18 +68,38 @@
       <!-- 分页 -->
       <Pagination v-if="totalCount>searchCondition.pageSize" :current-page.sync="searchCondition.pageIndex" :total-count="totalCount" :page-size="searchCondition.pageSize" :total-page="totalPage" @getList="getAllRegion" />
       <!-- 弹出窗 -->
-      <PartnerDatailDialog :show-add-dialog.sync="showAddDialog" />
+      <PartnerDatailDialog :show-add-dialog.sync="showAddDialog" @getparnerregion="getPartnerRegion" />
+      <!-- 查看详情 -->
+      <el-dialog
+        class="checkpartner"
+        title="合作商详情"
+        :visible.sync="dialogVisible"
+        width="42%"
+      >
+        <el-row :gutter="20">
+          <el-col :span="10" :offset="2">合作商名称：{{ PartnerContent.name }}</el-col>
+          <el-col :span="8" :offset="3">联系人：{{ PartnerContent.contact }}</el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="10" :offset="2">联系电话：{{ PartnerContent.mobile }}</el-col>
+          <el-col :span="8" :offset="3">分成比例：{{ PartnerContent.ratio }}%</el-col>
+        </el-row>
+      </el-dialog>
+      <!-- 修改 -->
+      <EditPartnerDialog ref="edit" :show-edit-dialog.sync="showEditDialog" @getparnerregion="getPartnerRegion" />
     </div>
   </div>
 </template>
 
 <script>
-import { getPartner } from '@/api'
+import { getPartner, delPartner } from '@/api'
 import PartnerDatailDialog from '@/views/node/components/PartnerDatailDialog'
+import EditPartnerDialog from '../components/EditPartnerDialog.vue'
 export default {
   name: 'NodeRegion',
   components: {
-    PartnerDatailDialog
+    PartnerDatailDialog,
+    EditPartnerDialog
   },
   data() {
     return {
@@ -98,7 +118,10 @@ export default {
       },
       AllPartnerList: [],
       showAddDialog: false,
-      loading: false
+      loading: false,
+      dialogVisible: false,
+      PartnerContent: {},
+      showEditDialog: false
 
     }
   },
@@ -115,19 +138,37 @@ export default {
         this.totalCount = +res.totalCount
         this.totalPage = +res.totalPage
 
-        console.log(this.AllPartnerList)
+        // console.log(this.AllPartnerList)
       } catch (error) {
         console.log(error)
       } finally {
         this.loading = false
       }
     },
-    // 查看详情
-    getDetail() {
+    // 查看
+    checkPartner(row) {
+      try {
+        this.dialogVisible = true
+        this.PartnerContent = row
+        console.log(row)
+      } catch (error) {
+        console.log(error)
+      }
     },
     add() {
       this.showAddDialog = true
+    },
+    async delPartner(row) {
+      // console.log(row)
+      await delPartner(row.id)
+      this.getPartnerRegion()
+    },
+    editPartner(row) {
+      console.log(row)
+      this.showEditDialog = true
+      this.$refs.edit.form = { name: row.name, ratio: row.ratio, contact: row.contact, mobile: row.mobile, id: row.id }
     }
+
   }
 
 }
@@ -148,5 +189,10 @@ export default {
   font-size: 14px;
   color:#6486ff ;
   margin-left: -5px;
+}
+.checkpartner{
+.el-col{
+  padding: 15px;
+}
 }
 </style>

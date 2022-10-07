@@ -12,67 +12,81 @@
             autocomplete="off"
             show-word-limit
           /></el-form-item>
-        <el-form-item prop="contact" label="所在区域：" :label-width="formLabelWidth">
-          <el-select v-model="value" placeholder="请选择">
-            <!-- <el-option
-              v-for="item in areaOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            /> -->
+        <el-form-item prop="regionId" label="所在区域：" :label-width="formLabelWidth">
+          <el-select v-model="form.regionId" placeholder="请选择">
+            <el-option
+              v-for="(item,index) in allnodelist"
+              :key="index"
+              :label="item.region.name"
+              :value="item.region.id"
+            />
           </el-select>
         </el-form-item>
-        <el-form-item prop="mobile" label="所在商圈：" :label-width="formLabelWidth">
-          <el-select v-model="value" placeholder="请选择">
-            <!-- <el-option
-              v-for="item in areaOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            /> -->
+        <el-form-item prop="businessId" label="所在商圈：" :label-width="formLabelWidth">
+          <el-select v-model="form.businessId" placeholder="请选择">
+            <el-option
+              v-for="(item,index) in allnodelist"
+              :key="index"
+              :label="item.businessType.name"
+              :value="item.businessType.id"
+            />
           </el-select>
         </el-form-item>
-        <el-form-item prop="ratio" label="归属合作商：" :label-width="formLabelWidth">
-          <el-select v-model="value" placeholder="请选择">
-            <!-- <el-option
-              v-for="item in areaOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            /> -->
+        <el-form-item prop="ownerId" label="归属合作商：" :label-width="formLabelWidth">
+          <el-select v-model="form.ownerId" placeholder="请选择">
+            <el-option
+              v-for="(item,index) in allnodelist"
+              :key="index"
+              :label="item.ownerName"
+              :value="item.ownerId"
+            />
           </el-select>
         </el-form-item>
-        <el-form-item prop="account" label="详细地址：" :label-width="formLabelWidth">
-          <MyCity v-model="form.provAndCity" />
+        <el-form-item prop="addr" label="详细地址：" :label-width="formLabelWidth">
+          <!-- <el-select v-model="value" placeholder="请选择"> -->
+          <el-cascader
+            v-model="form.addr"
+            placeholder="请选择"
+            size="large"
+            :options="options"
+            @change="handleChange"
+          />
+
+          <!-- </el-select> -->
 
         </el-form-item>
-        <el-form-item prop="password" label-width="130px">
+        <el-form-item prop="str" label-width="130px">
           <el-input
-            v-model="form.password"
+            v-model="form.str"
             type="textarea"
             placeholder="请输入详细地址"
             maxlength="60"
             autocomplete="off"
             show-word-limit
             :rows="3"
+            :value="allnodelist.areaCode"
           />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handerClose">取 消</el-button>
-        <el-button type="primary">确 定</el-button>
+        <el-button type="primary" @click="submit">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getPartner, getRegion } from '@/api'
+import { regionData } from 'element-china-area-data'
 export default {
   props: {
     showAddDialog: {
       type: Boolean,
       required: false
+    },
+    allnodelist: {
+      type: Array,
+      required: true
     }
   },
   data() {
@@ -80,11 +94,11 @@ export default {
       value: [],
       form: {
         name: '',
-        account: '',
-        ratio: '',
-        contact: '',
-        mobile: '',
-        password: ''
+        regionId: '',
+        businessId: '',
+        ownerId: '',
+        addr: '',
+        str: ''
       },
       formLabelWidth: '120px',
       rules: {
@@ -97,37 +111,8 @@ export default {
         password: [{ required: true, message: '请输入', trigger: 'blur' }]
 
       },
-      options: [{
-        value: 'beijing',
-        label: '北京市',
-        children: [{
-          value: 'shejiyuanze',
-          label: '设计原则',
-          children: [{
-            value: 'yizhi',
-            label: '一致'
-          }, {
-            value: 'fankui',
-            label: '反馈'
-          }, {
-            value: 'xiaolv',
-            label: '效率'
-          }, {
-            value: 'kekong',
-            label: '可控'
-          }]
-        }, {
-          value: 'daohang',
-          label: '导航',
-          children: [{
-            value: 'cexiangdaohang',
-            label: '侧向导航'
-          }, {
-            value: 'dingbudaohang',
-            label: '顶部导航'
-          }]
-        }]
-      }],
+      options: regionData,
+      selectedOptions: [],
       parentname: {}, // 合作商
       areaname: {} // 区域
     }
@@ -140,25 +125,27 @@ export default {
       this.$parent.showAddDialog = false
       this.form = {
         name: '',
-        account: '',
-        ratio: '',
-        contact: '',
-        mobile: '',
-        password: ''
+        regionId: '',
+        businessId: '',
+        ownerId: '',
+        addr: '',
+        str: ''
       }
     },
     async geiAllList() {
       try {
-        // 合作商
-        this.parentname = await getPartner()
-        console.log(this.parentname)
-        // 区域
-        this.areaname = await getRegion()
-        console.log(this.areaname)
+        // console.log(1)
       } catch (error) {
         console.log(error)
       }
+    },
+    handleChange(value) {
+      // console.log(value)
+    },
+    submit() {
+      console.log(this.form)
     }
+
   }
 }
 </script>

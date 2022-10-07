@@ -1,6 +1,6 @@
 <template>
-  <div class="addnodediaglog">
-    <el-dialog title="新增合作商" :visible="showAddDialog" width="42%" @close="handerClose">
+  <div class="editnodediaglog">
+    <el-dialog title="新增合作商" :visible="showEditDialog" width="42%" @close="handerClose">
       <el-form :model="form" :rules="rules">
         <el-form-item prop="name" label="合作商名称：" :label-width="formLabelWidth">
           <!-- <el-input v-model="form.name" autocomplete="off" /> -->
@@ -35,26 +35,6 @@
         <el-form-item prop="ratio" label="分成比例：" :label-width="formLabelWidth">
           <el-input-number v-model="form.ratio" controls-position="right" :min="1" :max="100" />
         </el-form-item>
-        <el-form-item prop="account" label="账号：" :label-width="formLabelWidth">
-          <el-input
-            v-model="form.account"
-            type="text"
-            placeholder="请输入"
-            maxlength="18"
-            autocomplete="off"
-            show-word-limit
-          />
-        </el-form-item>
-        <el-form-item prop="password" label="密码：" :label-width="formLabelWidth">
-          <el-input
-            v-model="form.password"
-            type="text"
-            placeholder="请输入"
-            maxlength="20"
-            autocomplete="off"
-            show-word-limit
-          />
-        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button>取 消</el-button>
@@ -65,53 +45,50 @@
 </template>
 
 <script>
-import { addPartner } from '@/api'
+import { changePartner } from '@/api'
 export default {
   props: {
-    showAddDialog: {
+    showEditDialog: {
       type: Boolean,
       required: false
     }
   },
   data() {
     return {
-      form: {
-        name: '',
-        account: '',
-        ratio: '',
-        contact: '',
-        mobile: '',
-        password: ''
-      },
-      formLabelWidth: '120px',
       rules: {
         name: [{ required: true, message: '请输入', trigger: 'blur' }],
-        account: [{ required: true, message: '请输入', trigger: 'blur' }],
         ratio: [{ required: true, message: '请输入', trigger: 'blur' }],
         contact: [{ required: true, message: '请输入', trigger: 'blur' }],
         mobile: [{ required: true, message: '请输入', trigger: 'blur' },
           { validator: /^(?:(?:\+|00)86)?1(?:(?:3[\d])|(?:4[5-79])|(?:5[0-35-9])|(?:6[5-7])|(?:7[0-8])|(?:8[\d])|(?:9[189]))\d{8}$/, trigger: 'blur' }
+        ]
 
-        ],
-        password: [{ required: true, message: '请输入', trigger: 'blur' }]
+      },
+      formLabelWidth: '120px',
+      form: {
+        name: '',
+        ratio: '',
+        contact: '',
+        mobile: '',
+        id: ''
       }
     }
   },
   methods: {
     handerClose() {
-      this.$parent.showAddDialog = false
+      this.$parent.showEditDialog = false
     },
     async submit() {
       try {
-        await addPartner(this.form)
-        this.$parent.showAddDialog = false
+        console.log(this.form)
+        await changePartner(this.form)
+        this.$parent.showEditDialog = false
         this.form = {
           name: '',
-          account: '',
           ratio: '',
           contact: '',
           mobile: '',
-          password: ''
+          id: ''
         }
         this.$emit('getparnerregion')
       } catch (error) {
@@ -119,12 +96,11 @@ export default {
       }
     }
   }
-
 }
 </script>
 
 <style lang="scss" socped>
-.addnodediaglog{
+.editnodediaglog{
   .el-dialog{
     border-radius: 10px;
   }
@@ -148,3 +124,4 @@ export default {
 }
 }
 </style>
+

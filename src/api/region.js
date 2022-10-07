@@ -84,3 +84,75 @@ export const addRegion = (regionName, remark) => {
 
   })
 }
+/**
+ * 删除点位
+ * @param {*} name
+ * @param {*} regionId
+ * @returns
+ */
+export const delNode = (name, regionId) => {
+  return request({
+    url: `/api/vm-service/node/${regionId}`,
+    method: 'DELETE'
+  })
+}
+
+export const addPartner = ({ name, account, password, ratio, contact, mobile }) => {
+  const res = { name, account, password, ratio, contact, mobile }
+  return request({
+    url: '/api/user-service/partner',
+    method: 'POST',
+    data: res
+  })
+}
+
+/**
+ * 删除合作商
+ * @param {*} id
+ * @returns
+ */
+export const delPartner = (id) => {
+  return request({
+    url: `/api/user-service/partner/${id}`,
+    method: 'DELETE'
+
+  })
+}
+/**
+ * 修改合作商
+ * @param {*} param0
+ * @returns
+ */
+export const changePartner = ({ name, ratio, contact, mobile, id }) => {
+  const result = { name, ratio, contact, mobile, id }
+  return request({
+    url: `/api/user-service/partner/${id}`,
+    method: 'PUT',
+    data: result
+  })
+}
+/**
+ * 修改点位
+ * @param {*} param0
+ * @returns
+ */
+export const changeNode = ({ name, addr, areaCode, createUserId, regionId, businessId, ownerId, ownerName }) => {
+  const res = { name, addr, areaCode, createUserId, regionId, businessId, ownerId, ownerName }
+  return request({
+    url: `/api/vm-service/node/${createUserId}`,
+    method: 'PUT',
+    data: res
+  })
+}
+/**
+ * 新增点位
+ * @param {*} params
+ * @returns
+ */
+export const addNode = (params) => {
+  return request({
+    url: '/api/vm-service/node',
+    method: 'POST',
+    params
+  })
+}

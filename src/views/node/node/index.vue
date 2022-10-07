@@ -1,7 +1,13 @@
 <template>
   <div>
     <!-- 搜索通栏 -->
-    <SearchPanel label1="点位搜索: " :label1value.sync="searchCondition.name" />
+    <SearchPanel label1="点位搜索: " :label1value.sync="searchContent" :label2value.sync="searchContents" label2="区域搜索:" @onSearch="searchNode">
+      <template v-slot:searchPanelSlot>
+        <el-select v-model="searchCondition.status" placeholder="请输入" clearable>
+          <el-option v-for="(item,index) of AllNodeList" :key="index" :label="item.region.name" :value="item.region.name" />
+        </el-select>
+      </template>
+    </SearchPanel>
     <!-- 按钮 -->
     <div class="panel">
       <Operation @add="add" />
@@ -49,7 +55,7 @@
           <template slot-scope="{row}">
             <el-button class="btn" @click="getDetail(row)">查看详情</el-button>
             <el-button class="editbtn" type="text" size="small" @click="editNode(row)">修改</el-button>
-            <el-button class="delbtn" type="text" size="small">删除</el-button>
+            <el-button class="delbtn" type="text" size="small" @click="delNode(row)">删除</el-button>
 
           </template>
 
@@ -58,7 +64,7 @@
       <!-- 分页 -->
       <Pagination v-if="totalCount>searchCondition.pageSize" :current-page.sync="searchCondition.pageIndex" :total-count="totalCount" :page-size="searchCondition.pageSize" :total-page="totalPage" @getList="getAllNode" />
       <!-- 弹出窗 -->
-      <NodeDatailDialog ref="edit" :all-node-list="AllNodeList" :show-add-dialog.sync="showAddDialog" />
+      <NodeDatailDialog ref="edit" :allnodelist="AllNodeList" :show-add-dialog.sync="showAddDialog" />
     </div>
     <!-- 查看详情 -->
 
@@ -95,7 +101,7 @@
 </template>
 
 <script>
-import { getNode, getNodeStatus } from '@/api'
+import { getNode, getNodeStatus, delNode } from '@/api'
 import NodeDatailDialog from '@/views/node/components/NodeDatailDialog'
 export default {
   name: 'NodeRegion',
@@ -121,7 +127,9 @@ export default {
       showAddDialog: false,
       loading: false,
       dialogFormVisible: false,
-      NodeStausList: {}
+      NodeStausList: {},
+      searchContent: '',
+      searchContents: ''
     }
   },
   created() {
@@ -137,7 +145,7 @@ export default {
         this.totalCount = +res.totalCount
         this.totalPage = +res.totalPage
 
-        // console.log(this.AllNodeList)
+        console.log(this.AllNodeList)
       } catch (error) {
         console.log(error)
       } finally {
@@ -158,8 +166,21 @@ export default {
     },
     editNode(row) {
       this.showAddDialog = true
-      this.$refs.edit.formdata = row
+
       console.log(row)
+    },
+    async delNode(row) {
+      try {
+        // console.log(row)
+        await delNode(row.name, row.id)
+        this.getAllNode()
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    searchNode() {
+      this.searchCondition.name = this.searchContents
+      this.getAllNode()
     }
 
   }
