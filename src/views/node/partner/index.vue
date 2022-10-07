@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 搜索通栏 -->
-    <SearchPanel label1="合作商搜索: " :label1value.sync="searchCondition.name" />
+    <SearchPanel label1="合作商搜索: " :label1value.sync="searchContent" @onSearch="searchPartner" />
     <!-- 按钮 -->
     <div class="panel">
       <Operation @add="add" />
@@ -121,7 +121,8 @@ export default {
       loading: false,
       dialogVisible: false,
       PartnerContent: {},
-      showEditDialog: false
+      showEditDialog: false,
+      searchContent: ''
 
     }
   },
@@ -167,6 +168,11 @@ export default {
       console.log(row)
       this.showEditDialog = true
       this.$refs.edit.form = { name: row.name, ratio: row.ratio, contact: row.contact, mobile: row.mobile, id: row.id }
+    },
+    searchPartner() {
+      this.searchCondition.name = this.searchContent
+      this.getPartnerRegion()
+      // console.log(this.searchContent)
     }
 
   }

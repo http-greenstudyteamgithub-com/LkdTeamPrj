@@ -64,7 +64,7 @@
             autocomplete="off"
             show-word-limit
             :rows="3"
-            :value="allnodelist.areaCode"
+            :value="addlist.addr"
           />
         </el-form-item>
       </el-form>
@@ -98,7 +98,8 @@ export default {
         businessId: '',
         ownerId: '',
         addr: '',
-        str: ''
+        str: '',
+        createUserId: 1
       },
       formLabelWidth: '120px',
       rules: {
@@ -113,12 +114,24 @@ export default {
       },
       options: regionData,
       selectedOptions: [],
-      parentname: {}, // 合作商
-      areaname: {} // 区域
+      addlist: {
+        name: '',
+        addr: '',
+        areaCode: '',
+        createUserId: '',
+        regionId: '',
+        businessId: '',
+        ownerId: '',
+        ownerName: ''
+      }
     }
+  },
+  computed: {
   },
   created() {
     // this.geiAllList()
+    // console.log(this.allnodelist)
+    // this.regionList()
   },
   methods: {
     handerClose() {

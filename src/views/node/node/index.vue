@@ -3,8 +3,8 @@
     <!-- 搜索通栏 -->
     <SearchPanel label1="点位搜索: " :label1value.sync="searchContent" :label2value.sync="searchContents" label2="区域搜索:" @onSearch="searchNode">
       <template v-slot:searchPanelSlot>
-        <el-select v-model="searchCondition.status" placeholder="请输入" clearable>
-          <el-option v-for="(item,index) of AllNodeList" :key="index" :label="item.region.name" :value="item.region.name" />
+        <el-select v-model="searchContents" placeholder="请输入" clearable>
+          <el-option v-for="(item,index) of AllNodeList" :key="index" :label="item.region.name" :value="item.region.id" />
         </el-select>
       </template>
     </SearchPanel>
@@ -103,6 +103,7 @@
 <script>
 import { getNode, getNodeStatus, delNode } from '@/api'
 import NodeDatailDialog from '@/views/node/components/NodeDatailDialog'
+import { CodeToText, TextToCode } from 'element-china-area-data'
 export default {
   name: 'NodeRegion',
   components: {
@@ -145,7 +146,7 @@ export default {
         this.totalCount = +res.totalCount
         this.totalPage = +res.totalPage
 
-        console.log(this.AllNodeList)
+        // console.log(this.AllNodeList)
       } catch (error) {
         console.log(error)
       } finally {
@@ -166,8 +167,14 @@ export default {
     },
     editNode(row) {
       this.showAddDialog = true
-
-      console.log(row)
+      this.$refs.edit.form = { name: row.name,
+        regionId: row.region.id,
+        businessId: row.businessId,
+        ownerId: row.ownerId
+        // addr: row.areaCode,
+        // str: ''
+      }
+      console.log(CodeToText[row.areaCode])
     },
     async delNode(row) {
       try {
@@ -179,7 +186,9 @@ export default {
       }
     },
     searchNode() {
-      this.searchCondition.name = this.searchContents
+      this.searchCondition.name = this.searchContent
+      this.searchCondition.regionId = this.searchContents
+
       this.getAllNode()
     }
 
