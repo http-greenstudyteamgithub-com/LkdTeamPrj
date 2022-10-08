@@ -38,3 +38,41 @@ export const getVmAPI = (data) => {
     data
   })
 }
+
+/**
+ *新增售货机类型
+ * @param {*} data
+ * @returns
+ */
+export const addVmType = (data) => {
+  return request({
+    url: '/api/vm-service/vmType',
+    method: 'POST',
+    data
+  })
+}
+
+/**
+ *修改售货机类型
+ * @param {*} typeId
+ * @returns
+ */
+export const modifyVmType = (data) => {
+  return request({
+    url: `/api/vm-service/vmType/${data.typeId}`,
+    method: 'PUT',
+    data
+  })
+}
+
+/**
+ *删除售货机类型
+ * @param {*} typeId
+ * @returns
+ */
+export const delVmType = (typeId) => {
+  return request({
+    url: `/api/vm-service/vmType/${typeId}`,
+    method: 'DELETE'
+  })
+}
