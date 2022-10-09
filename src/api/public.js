@@ -32,3 +32,16 @@ export const loginAPI = ({ loginName, password, code, clientToken }) => {
     }
   })
 }
+
+/**
+ *上传图片
+ * @param {*} data
+ * @returns
+ */
+export const imgUpload = (data) => {
+  return request({
+    url: '/api/vm-service/sku/fileUpload',
+    method: 'POST',
+    data
+  })
+}

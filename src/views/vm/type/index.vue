@@ -222,4 +222,5 @@ export default {
     padding: 0;
     border: none;
   }
+
 </style>
