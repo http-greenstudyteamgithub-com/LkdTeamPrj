@@ -4,7 +4,7 @@
       <el-form :inline="true" class="form-inline">
         <el-form-item label="型号搜索:">
           <el-input
-            v-model.trim="value"
+            v-model.trim="data.name"
             clearable
             placeholder="请输入"
           />
@@ -19,6 +19,7 @@
         <el-button
           class="btn"
           icon="el-icon-circle-plus-outline"
+          @click="add"
         >新建</el-button>
       </div>
       <el-table
@@ -34,7 +35,7 @@
 
         <el-table-column
           prop="name"
-          label="饮料机"
+          label="型号名称"
           min-width="10%"
         />
         <el-table-column
@@ -73,23 +74,28 @@
           min-width="10%"
         >
           <!-- <template slot-scope="res"></template> -->
-          <template>
-            <el-button type="text" size="small">修改</el-button>
-            <el-button type="text" size="small" style="color: red;">删除</el-button>
+          <template slot-scope="{row}">
+            <el-button type="text" size="small" @click="modifyVm(row)">修改</el-button>
+            <el-button type="text" size="small" style="color: red;" @click="delVm(row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
     <!-- 分页 -->
-    <Pagination v-if="totalCount<data.pageSize" :current-page.sync="data.pageIndex" :total-count="page.totalCount" :page-size="data.pageSize" :total-page="page.totalPage" @getList="taskSearchResult" />
+    <Pagination v-if="page.totalCount>data.pageSize" :current-page.sync="data.pageIndex" :total-count="page.totalCount" :page-size="data.pageSize" :total-page="page.totalPage" @getList="taskSearchResult" />
+    <!-- 新建弹窗 -->
+    <AddVmDialog ref="addDialog" :dialog-form-visible.sync="dialogFormVisible" @refreshList="Search" />
   </div>
 </template>
 
 <script>
-import { getTypeAPI } from '@/api/index.js'
-
+import { getTypeAPI, delVmType } from '@/api/index.js'
+import AddVmDialog from './components/addVmDialog.vue'
 export default {
   name: 'Type',
+  components: {
+    AddVmDialog
+  },
   data() {
     return {
       value: '',
@@ -99,17 +105,16 @@ export default {
       },
       data: {
         pageIndex: 1,
-        pageSize: 10
+        pageSize: 10,
+        name: ''
       },
-      totalCount: 0,
-      totalPage: 0,
       list: [],
       page: {
         pageIndex: 0,
         totalCount: 0,
         totalPage: 0
       },
-      search: {}
+      dialogFormVisible: false// 展示新建弹窗
     }
   },
   created() {
@@ -127,18 +132,32 @@ export default {
       this.getType()
     },
     Search() {
-      if (this.value.length === 0) {
-        this.data = {
-          pageIndex: 1,
-          pageSize: 10
+      this.data.pageIndex = 1
+      this.getType()
+    },
+    add() {
+      this.dialogFormVisible = true
+    },
+    modifyVm(row) {
+      this.$refs.addDialog.form = { ...row }
+      this.dialogFormVisible = true
+      console.log(row)
+    },
+    async delVm(row) {
+      this.$confirm('是否确认删除', '提示', {
+        type: 'warning'
+      }).then(async() => {
+        try {
+          await delVmType(row.typeId)
+          this.Search()
+          this.$message.success('删除成功')
+        } catch (error) {
+          if (error.response) {
+            this.$message.error(error.response.data)
+          }
         }
-        this.getType()
-      } else {
-        this.data.pageIndex = 1
-        this.data.pageSize = 10
-        this.data.name = this.value
-        this.getType()
-      }
+      }).catch(() => {
+      })
     }
   }
 }
@@ -153,7 +172,6 @@ export default {
     padding-left: 17px;
     background-color: #fff;
   }
-
 </style>
 
 <style lang="scss">
@@ -205,4 +223,3 @@ export default {
     border: none;
   }
 </style>
-

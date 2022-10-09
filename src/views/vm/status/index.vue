@@ -79,40 +79,43 @@
         <el-row :gutter="20" class="sku-stats" type="flex" justify="space-around" align="middle" style="margin-left: -10px; margin-right: -10px;">
           <el-col :span="6">
             <span>销售量:</span>
-            <span>1112</span>
-            <span>&nbsp;个</span>
+            <span class="number">{{ Count }}</span>
+            <span class="unit">&nbsp;个</span>
           </el-col>
           <el-col :span="6">
             <span>销售额:</span>
-            <span>2564.18</span>
-            <span>&nbsp;元</span>
+            <span class="number">{{ Order }}</span>
+            <span class="unit">&nbsp;元</span>
           </el-col>
           <el-col :span="6">
             <span>补货次数:</span>
-            <span>0</span>
-            <span>&nbsp;次</span>
+            <span class="number">{{ SupplyCount }}</span>
+            <span class="unit">&nbsp;次</span>
           </el-col>
           <el-col :span="6">
             <span>维修次数:</span>
-            <span>0</span>
-            <span>&nbsp;次</span>
+            <span class="number">{{ RepairCount }}</span>
+            <span class="unit">&nbsp;次</span>
           </el-col>
         </el-row>
         <div class="sku-title">
           商品销量（月）
         </div>
-        <el-row class="sku-list">
-          <el-col :span="6">
+        <el-row v-if="SkuCollect.length" class="sku-list">
+          <el-col v-for="(item,index) in SkuCollect" :key="index" :span="6">
             <el-row class="sku-item">
               <el-col :span="14">
-                <div title="100橙汁自然纯" class="sku-name">100橙汁自然纯</div>
+                <div :title="item.skuName" class="sku-name">{{ item.skuName }}</div>
               </el-col>
               <el-col :span="10">
-                :194
+                :{{ item.count }}
               </el-col>
             </el-row>
           </el-col>
         </el-row>
+        <div v-if="!SkuCollect.length" style="text-align: center;">
+          当前设备未销售商品
+        </div>
       </div>
     </el-dialog>
   </div>
@@ -120,6 +123,8 @@
 
 <script>
 import { getAutomatAPI } from '@/api/index.js'
+import { orderCountAPI, gteOrderAmountAPI, getSupplyCountAPI, getRepairCountAPI, getSkuCollectAPI } from '@/api/status'
+import { dayFormate, getMonthFirstDay } from '@/utils/dateFormate'
 export default {
   name: 'Device',
 
@@ -143,8 +148,28 @@ export default {
         totalPage: 0
       },
       search: {},
-      dialogFormVisible: true
+      dialogFormVisible: false,
+      Count: 0,
+      Order: 0,
+      SupplyCount: 0,
+      RepairCount: 0,
+      SkuCollect: []
     }
+  },
+  computed: {
+    firstDay() {
+      return `${getMonthFirstDay(new Date())} 00:00:00`
+    },
+    today() {
+      return `${dayFormate(new Date())} 23:59:59`
+    },
+    firstDay1() {
+      return getMonthFirstDay(new Date())
+    },
+    today1() {
+      return dayFormate(new Date())
+    }
+
   },
   created() {
     this.getAutomat()
@@ -172,6 +197,70 @@ export default {
         this.data.innerCode = this.value
         this.getAutomat()
       }
+    },
+    //  点击查看详情
+    handleClick(row) {
+      this.dialogFormVisible = true
+      // 获取销售量
+      this.orderCount(row.innerCode)
+      // 获取收入
+      this.gteOrderAmount(row.innerCode)
+      // 获取售货机补货次数
+      this.getSupplyCount(row.innerCode)
+      //  获取售货机维修次数
+      this.getRepairCount(row.innerCode)
+      // 获取售货机商品销量
+      this.getSkuCollect(row.innerCode)
+    },
+    // 获取销售量
+    async orderCount(code) {
+      const data = {
+        start: this.firstDay,
+        end: this.today,
+        innerCode: code
+      }
+      const res = await orderCountAPI(data)
+      this.Count = res
+    },
+    // 获取收入
+    async gteOrderAmount(code) {
+      const data = {
+        start: this.firstDay,
+        end: this.today,
+        innerCode: code
+      }
+      const res = await gteOrderAmountAPI(data)
+      this.Order = (res / 100).toFixed(2)
+    },
+    // 获取售货机补货次数
+    async getSupplyCount(code) {
+      const data = {
+        start: this.firstDay1,
+        end: this.today1,
+        innerCode: code
+      }
+      const res = await getSupplyCountAPI(data)
+      this.SupplyCount = res
+    },
+    //  获取售货机维修次数
+    async getRepairCount(code) {
+      const data = {
+        start: this.firstDay1,
+        end: this.today1,
+        innerCode: code
+      }
+      const res = await getRepairCountAPI(data)
+      this.RepairCount = res
+    },
+    // 获取售货机商品销量
+    async getSkuCollect(code) {
+      const data = {
+        start: this.firstDay1,
+        end: this.today1,
+        innerCode: code
+      }
+      const res = await getSkuCollectAPI(data)
+      this.SkuCollect = res
     }
   }
 }
@@ -223,6 +312,13 @@ export default {
       text-overflow: ellipsis;
     }
 }
+}
+.number{
+  color: #5f84ff;
+}
+.unit{
+    font-size: 12px;
+    color: #5f84ff;
 }
 
 </style>

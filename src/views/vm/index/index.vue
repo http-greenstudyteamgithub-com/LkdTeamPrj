@@ -21,12 +21,13 @@
           icon="el-icon-circle-plus-outline"
           @click="AddDevice"
         >新建</el-button>
-        <el-button type="warning" class="btn2">工单配置</el-button>
+        <el-button type="warning" class="btn2" @click="Batch">工单配置</el-button>
       </div>
       <el-table
         :header-cell-style="{background:'#f5f7fa',color:'#737674',fontWeight:400}"
         :data="list"
         style="width: 100%"
+        @selection-change="handleSelectionChange"
       >
         <el-table-column
           type="selection"
@@ -73,10 +74,10 @@
           min-width="10%"
         >
           <!-- <template slot-scope="res"></template> -->
-          <template>
-            <el-button type="text" size="small">货道</el-button>
-            <el-button type="text" size="small">策略</el-button>
-            <el-button type="text" size="small">修改</el-button>
+          <template slot-scope="{row}">
+            <el-button type="text" size="small" @click="getChannelList(row)">货道</el-button>
+            <el-button type="text" size="small" @click="checkPolicy(row.innerCode)">策略</el-button>
+            <el-button type="text" size="small" @click="edit(row)">修改</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -106,16 +107,108 @@
         <el-button type="primary" @click="add">确 定</el-button>
       </div>
     </el-dialog>
+
+    <!-- 工单配置 -->
+    <el-dialog title="批量策略管理" :visible.sync="ShowBatch" @close="cancel">
+      <el-form ref="batchs" :model="batch">
+        <el-form-item label="选择策略:" :label-width="formLabelWidth">
+          <el-select v-model="batch.batchId" placeholder="请选择" class="selectWidth">
+            <el-option v-for="item in batchList" :key="item.policyId" :label="item.policyName" :value="item.policyId" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancel">取 消</el-button>
+        <el-button type="primary" @click="fixStrategy">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 查看策略 -->
+    <el-dialog title="策略管理" :visible.sync="showPolicy">
+      <el-form>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="机器编号:" :label-width="formLabelWidth">
+              <span>{{ policyList.innerCode }}</span>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="策略名称：" :label-width="formLabelWidth">
+              <span>{{ policyList.policyName }}</span>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="策略方案:" :label-width="formLabelWidth">
+              <span>{{ policyList.discount }}%</span>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button class="policyBtn" @click="cancelPolicy">取消策略</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 修改 -->
+    <el-dialog v-if="showEdit" title="修改设备" :visible.sync="showEdit">
+      <el-form :model="editId">
+        <el-form-item label="机器编号:" :label-width="formLabelWidth">
+          <span>{{ editList.innerCode }}</span>
+        </el-form-item>
+        <el-form-item label="供货时间:" :label-width="formLabelWidth">
+          <span>{{ editList.lastSupplyTime }}</span>
+        </el-form-item>
+        <el-form-item label="设备类型:" :label-width="formLabelWidth">
+          <span>{{ editList.type? editList.type.name : '没有设备' }}</span>
+        </el-form-item>
+        <el-form-item label="设备容量:" :label-width="formLabelWidth">
+          <span>{{ editList.type?editList.type.channelMaxCapacity :'0' }}</span>
+        </el-form-item>
+        <el-form-item label="选择点位:" :label-width="formLabelWidth">
+          <el-select v-model="editId.nodeId" placeholder="请选择" class="selectWidth">
+            <el-option v-for="item in pointList" :key="item.typeId" :label="item.name" :value="item.id" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="合作商:" :label-width="formLabelWidth">
+          <span>{{ editList.ownerName }}</span>
+        </el-form-item>
+        <el-form-item label="所属区域:" :label-width="formLabelWidth">
+          <span>{{ editList.region.name }}</span>
+        </el-form-item>
+        <el-form-item label="设备地址:" :label-width="formLabelWidth">
+          <span>{{ editList.node.name }}</span>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="showEdit=false">取 消</el-button>
+        <el-button type="primary" @click="sureEdit">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 货道 -->
+    <ChannelListDialog ref="channelListDialog" :show-chanel-list-dialog.sync="showChanelListDialog" :business-id="businessId" />
   </div>
 </template>
 
 <script>
-import { getAutomatAPI, getTypeAPI, getNodeAPI, getVmAPI } from '@/api/index.js'
+import {
+  getAutomatAPI, getTypeAPI, getNodeAPI, getVmAPI,
+  getPolicyAPI, setApplyPolicyAPI, getVmPolicyAPI, cancelPolicyAPI,
+  editPointAPI, getVmSearchResult, getVmChannelList
+} from '@/api/index.js'
+import ChannelListDialog from '@/views/vm/index/components/ChannelListDialog'
 export default {
   name: 'Manage',
-
+  components: {
+    ChannelListDialog
+  },
   data() {
     return {
+      batch: {
+        innerCode: '',
+        batchId: 1
+      },
       value: '',
       formInline: {
         user: '',
@@ -160,6 +253,45 @@ export default {
         vmType: 0,
         nodeId: 0,
         createUserId: 1
+      },
+      ShowBatch: false,
+      innerCodeList: [],
+      batchList: [],
+      //  策略部分
+      showPolicy: false,
+      policyList: [],
+      // 修改设备部分
+      showEdit: false,
+      editList: [],
+      // 点位id
+      editId: {
+        nodeId: '1',
+        id: ''
+      },
+      // 货道
+      showChanelListDialog: false,
+      headerColumns: [
+        { selection: true },
+        { index: true, label: '序号' },
+        { label: '设备编号', prop: 'innerCode', minWidth: '10%' },
+        { slot: 'vmType' },
+        { slot: 'addr' },
+        { label: '合作商', prop: 'ownerName', minWidth: '10%' },
+        { slot: 'vmStatus' },
+        { slot: 'operation' }
+      ], // 表头
+      vmList: [],
+      loading: false, // 控制表格加载状态
+      totalCounts: 0,
+      totalPages: 0,
+      businessId: 0
+    }
+  },
+  computed: {
+    datas() {
+      return {
+        innerCodeList: this.innerCodeList,
+        policyId: this.batch.batchId
       }
     }
   },
@@ -209,6 +341,101 @@ export default {
       await getVmAPI(this.vmData)
       await this.getAutomat()
       this.empty()
+    },
+    cancel() {
+      this.batch.batchId = 1
+      this.ShowBatch = false
+    },
+    async Batch() {
+      if (this.innerCodeList.length) {
+        this.ShowBatch = true
+        const res = await getPolicyAPI()
+        this.batchList = res
+      } else {
+        this.$message({
+          message: '请勾选售货机',
+          type: 'warning'
+        })
+      }
+    },
+    handleSelectionChange(val) {
+      const arr = []
+      val.forEach(item => {
+        arr.push(item.innerCode)
+      })
+      this.innerCodeList = arr
+    },
+    //  确定更改策略
+    async fixStrategy() {
+      try {
+        await setApplyPolicyAPI(this.datas)
+        this.getAutomat()
+      } finally {
+        this.cancel()
+      }
+    },
+    //  查看策略
+    async checkPolicy(id) {
+      const res = await getVmPolicyAPI(id)
+      // 有策略
+      if (res.innerCode) {
+        this.showPolicy = true
+        this.policyList = res
+        this.batch.innerCode = id
+        this.getAutomat()
+      } else { //  没有策略
+        this.innerCodeList = [id]
+        this.Batch()
+      }
+    },
+    // 取消策略
+    async cancelPolicy() {
+      const data = {
+        innerCode: this.batch.innerCode,
+        policyId: this.policyList.policyId
+      }
+      await cancelPolicyAPI(data)
+      this.showPolicy = false
+      this.getAutomat()
+    },
+    // 修改
+    async edit(row) {
+      this.showEdit = true
+      this.editList = row
+      const { currentPageRecords } = await getNodeAPI(this.version)
+      this.pointList = currentPageRecords
+      this.editId.id = row.nodeId
+      this.editId.id = row.id
+    },
+    async sureEdit() {
+      try {
+        await editPointAPI(this.editId)
+        this.showEdit = false
+        this.getAutomat()
+      } catch (error) {
+        this.$message.error('该设备正在运营')
+      }
+    },
+    // 获取售货机列表
+    async  getVmSearchResult() {
+      const { currentPageRecords, totalCount, totalPage } = await getVmSearchResult(this.searchCondition)
+      this.vmList = currentPageRecords
+      this.totalCounts = +totalCount
+      this.totalPages = +totalPage
+    },
+    // 货道
+    async getChannelList(row) {
+      this.businessId = row.businessId
+      this.showChanelListDialog = true
+      this.$refs.channelListDialog.typeInfo = row.type
+      this.$refs.channelListDialog.innerCode = row.innerCode
+      try {
+        const res = await getVmChannelList(row.innerCode)
+        this.$refs.channelListDialog.chanelList = res
+        this.showChanelListDialog = true
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 }
@@ -236,6 +463,11 @@ export default {
   }
   ::v-deep .el-dialog{
     border-radius: 10px;
+  }
+  .policyBtn{
+    background-color: #fbf4f0;
+    border: unset;
+    border-radius: 4px;
   }
 </style>
 
