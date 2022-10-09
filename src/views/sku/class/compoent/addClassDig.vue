@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="新增商品类型"
+    :title="title"
     :visible="dialogVisible"
     width="40%"
     @close="closeDialog"
@@ -29,6 +29,10 @@ export default {
     dialogVisible: {
       type: Boolean,
       default: false
+    },
+    title: {
+      type: String,
+      default: '新增商品类型'
     }
   },
   data() {

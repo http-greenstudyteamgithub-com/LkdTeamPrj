@@ -34,7 +34,7 @@
         </el-table-column>
       </el-table>
       <!-- 新建弹窗 -->
-      <addClassDig :dialog-visible.sync="dialogVisible" @confirmFn="confirmFn" />
+      <addClassDig ref="addDig" :title="title" :dialog-visible.sync="dialogVisible" @confirmFn="confirmFn" />
     </div>
     <!-- 分页 -->
     <Pagination
@@ -61,7 +61,7 @@ export default {
   },
   data() {
     return {
-      // label1value: '',
+      label1value: '',
       currentPageRecords: [],
       dialogVisible: false,
       searchCondition: {
@@ -78,7 +78,7 @@ export default {
     tableData() {
       return this.currentPageRecords
     },
-    label1value() {
+    title() {
       return this.classId ? '修改商品类型' : '新增商品类型'
     }
   },
@@ -112,15 +112,18 @@ export default {
     },
     // 添加新类别新建btn
     add() {
+      this.$refs.addDig.ruleForm = ''
       this.dialogVisible = true
       console.log(11)
     },
     // 修改
     async editClass(row) {
+      this.$refs.addDig.ruleForm = ''
       // 拿到当前点击的row数据
       this.dialogVisible = true // 弹出层
       this.className = row.className
       this.classId = row.classId
+      this.$refs.addDig.ruleForm = row
       // try {
       //   await editClassApi(row.classId, this.className)
       // } catch (error) {

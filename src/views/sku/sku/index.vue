@@ -143,10 +143,12 @@ export default {
       this.getShopSearchList()
     },
     add() {
+      // this.$refs.addshop.ruleForm = ''
       console.log('add')
       this.dialogVisible = true
     },
     editClass(row) {
+      // this.$refs.addshop.ruleForm = ''
       this.currentRow = row
       this.$refs.addshop.ruleForm = row
       // console.log(this.$refs.addshop.ruleForm)
