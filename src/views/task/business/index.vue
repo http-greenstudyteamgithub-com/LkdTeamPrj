@@ -79,7 +79,14 @@
         </el-table-column>
       </el-table>
       <!-- 分页 -->
-      <Pagination v-if="totalCount>searchCondition.pageSize" :current-page.sync="searchCondition.pageIndex" :total-count="totalCount" :page-size="searchCondition.pageSize" :total-page="totalPage" @getList="taskSearchResult" />
+      <Pagination
+        v-if="totalCount>searchCondition.pageSize"
+        :current-page.sync="searchCondition.pageIndex"
+        :total-count="totalCount"
+        :page-size="searchCondition.pageSize"
+        :total-page="totalPage"
+        @getList="taskSearchResult"
+      />
     </div>
     <!-- 新增工单弹出框 -->
     <AddDialog :show-add-dialog.sync="showAddDialog" @initTaskList="initTaskResult" />
@@ -174,7 +181,7 @@ export default {
     },
     // 点击查询
     onSearch() {
-      this.searchCondition.pageIndex = 1
+      this.searchCondition.pageIndex = 1 // 按照人员名字搜索
       this.taskSearchResult()
     }
 

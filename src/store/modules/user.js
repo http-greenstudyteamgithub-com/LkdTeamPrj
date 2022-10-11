@@ -4,7 +4,8 @@ import { Message } from 'element-ui'
 const state = {
   loginUserInfo: {},
   userToken: null,
-  loginTime: 0
+  loginTime: 0,
+  indexTime: 0
 }
 const mutations = {
   SET_LOGIN_USERINFO(state, userInfo) {
@@ -25,6 +26,9 @@ const mutations = {
   },
   REMOVE_LOGIN_TIME(state) {
     state.loginTime = 0
+  },
+  SET_INDEX_TIME(state, data) {
+    state.indexTime = data
   }
 }
 const actions = {

@@ -1,4 +1,4 @@
-// 表单传值的实例
+// // 表单传值的实例
 // export default {
 //   headerColumns: [
 //     // 序号

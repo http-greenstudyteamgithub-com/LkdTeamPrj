@@ -5,6 +5,7 @@ import app from './modules/app'
 import settings from './modules/settings'
 import user from './modules/user'
 import time from './modules/time'
+import sku from './modules/sku' // by xh
 import createPersistedState from 'vuex-persistedstate'// 引入持久化插件
 import Cookies from 'js-cookie'// 引入cookie插件
 
@@ -15,7 +16,8 @@ const store = new Vuex.Store({
     app,
     settings,
     user,
-    time
+    time,
+    sku
   },
   getters,
   plugins: [
