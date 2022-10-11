@@ -39,10 +39,10 @@
         <el-table-column
           v-else
           :key="`normal_${index}`"
-          show-overflow-tooltip
           :prop="item.prop"
           :label="item.label"
           :min-width="item.minWidth"
+          :show-overflow-tooltip="true"
         />
       </template>
 

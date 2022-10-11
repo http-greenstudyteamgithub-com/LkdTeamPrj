@@ -62,7 +62,7 @@
         />
         <el-table-column
           label="创建日期"
-          min-width="10%"
+          min-width="15%"
         >
           <template slot-scope="{row}">
             <span style="margin-left: 10px">{{ row.createTime |dayFormateFilter() }}</span>
@@ -79,14 +79,21 @@
         </el-table-column>
       </el-table>
       <!-- 分页 -->
-      <Pagination v-if="totalCount>searchCondition.pageSize" :current-page.sync="searchCondition.pageIndex" :total-count="totalCount" :page-size="searchCondition.pageSize" :total-page="totalPage" @getList="taskSearchResult" />
+      <Pagination
+        v-if="totalCount>searchCondition.pageSize"
+        :current-page.sync="searchCondition.pageIndex"
+        :total-count="totalCount"
+        :page-size="searchCondition.pageSize"
+        :total-page="totalPage"
+        @getList="taskSearchResult"
+      />
     </div>
     <!-- 新增工单弹出框 -->
     <AddDialog :show-add-dialog.sync="showAddDialog" @initTaskList="initTaskResult" />
     <!-- 工单配置弹出窗 -->
     <TaskSetDialog :show-set-dialog.sync="showSetDialog" />
     <!-- 查看详情弹出窗 -->
-    <TaskDetailDialog ref="detailDialog" :show-dialog.sync="showTaskDetailDialog" :detail-info="detailInfo" @initTaskList="initTaskResult" />
+    <TaskDetailDialog ref="detailDialog" :show-dialog.sync="showTaskDetailDialog" :detail-info="detailInfo" @initTaskResult="initTaskResult" />
   </div>
 </template>
 
@@ -174,7 +181,7 @@ export default {
     },
     // 点击查询
     onSearch() {
-      this.searchCondition.pageIndex = 1
+      this.searchCondition.pageIndex = 1 // 按照人员名字搜索
       this.taskSearchResult()
     }
 
