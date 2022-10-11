@@ -1,13 +1,204 @@
 <template>
-  <div>node/partner</div>
+  <div>
+    <!-- 搜索通栏 -->
+    <SearchPanel label1="合作商搜索: " :label1value.sync="searchContent" @onSearch="searchPartner" />
+    <!-- 按钮 -->
+    <div class="panel">
+      <Operation @add="add" />
+      <!-- 表格-->
+      <el-table
+        v-loading="loading"
+        :header-cell-style="{background:'#f5f7fa',color:'#737674',fontWeight:400}"
+        :data="AllPartnerList"
+        style="width: 100%"
+      >
+        <el-table-column
+          type="index"
+          label="序号"
+          min-width="20%"
+        />
+        <el-table-column
+          prop="name"
+          label="合作商名称"
+          min-width="10%"
+        />
+        <el-table-column
+          prop="account"
+          label="账号"
+          min-width="8%"
+        >
+          <!-- <template slot-scope="{row}">
+            <span style="margin-left: 10px">{{ row.taskType.typeName }}</span>
+          </template> -->
+        </el-table-column>
+        <el-table-column
+          prop="vmCount"
+          label="设备数量"
+          min-width="8%"
+        />
+        <el-table-column
+          prop="ratio"
+          label="分成比例"
+          min-width="8%"
+        />
+        <el-table-column
+          prop="contact"
+          label="联系人"
+          min-width="8%"
+        />
+        <el-table-column
+          prop="mobile"
+          label="联系电话"
+          min-width="10%"
+        />
+        <el-table-column
+          label="操作"
+          min-width="12%"
+        >
+          <template slot-scope="{row}">
+            <el-button class="changepwd" type="text" size="small">重置密码</el-button>
+            <el-button class="btn" @click="checkPartner(row)">查看详情</el-button>
+            <el-button class="editbtn" type="text" size="small" @click="editPartner(row)">修改</el-button>
+            <el-button class="delbtn" type="text" size="small" @click="delPartner(row)">删除</el-button>
+
+          </template>
+
+        </el-table-column>
+      </el-table>
+      <!-- 分页 -->
+      <Pagination v-if="totalCount>searchCondition.pageSize" :current-page.sync="searchCondition.pageIndex" :total-count="totalCount" :page-size="searchCondition.pageSize" :total-page="totalPage" @getList="getAllRegion" />
+      <!-- 弹出窗 -->
+      <PartnerDatailDialog :show-add-dialog.sync="showAddDialog" @getparnerregion="getPartnerRegion" />
+      <!-- 查看详情 -->
+      <el-dialog
+        class="checkpartner"
+        title="合作商详情"
+        :visible.sync="dialogVisible"
+        width="42%"
+      >
+        <el-row :gutter="20">
+          <el-col :span="10" :offset="2">合作商名称：{{ PartnerContent.name }}</el-col>
+          <el-col :span="8" :offset="3">联系人：{{ PartnerContent.contact }}</el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="10" :offset="2">联系电话：{{ PartnerContent.mobile }}</el-col>
+          <el-col :span="8" :offset="3">分成比例：{{ PartnerContent.ratio }}%</el-col>
+        </el-row>
+      </el-dialog>
+      <!-- 修改 -->
+      <EditPartnerDialog ref="edit" :show-edit-dialog.sync="showEditDialog" @getparnerregion="getPartnerRegion" />
+    </div>
+  </div>
 </template>
 
 <script>
+import { getPartner, delPartner } from '@/api'
+import PartnerDatailDialog from '@/views/node/components/PartnerDatailDialog'
+import EditPartnerDialog from '../components/EditPartnerDialog.vue'
 export default {
-  name: 'NodePartner'
+  name: 'NodeRegion',
+  components: {
+    PartnerDatailDialog,
+    EditPartnerDialog
+  },
+  data() {
+    return {
+      label1: '点位搜索',
+      label2: '区域搜索',
+      tableData: [], // 表格数据
+      headerColumns: [
+      ], // 表头
+      totalCount: 0, // 总数量
+      totalPage: 0, // 总页数
+      searchCondition: {
+        pageIndex: 1,
+        pageSize: 10,
+        name: '', // 点位搜索词——点位名称
+        regionId: ''// 区域搜索——区域id
+      },
+      AllPartnerList: [],
+      showAddDialog: false,
+      loading: false,
+      dialogVisible: false,
+      PartnerContent: {},
+      showEditDialog: false,
+      searchContent: ''
+
+    }
+  },
+  created() {
+    this.getPartnerRegion()
+  },
+  methods: {
+    // 获取所有合作商列表
+    async getPartnerRegion() {
+      try {
+        this.loading = true
+        const res = await getPartner(this.searchCondition)
+        this.AllPartnerList = res.currentPageRecords
+        this.totalCount = +res.totalCount
+        this.totalPage = +res.totalPage
+
+        // console.log(this.AllPartnerList)
+      } catch (error) {
+        console.log(error)
+      } finally {
+        this.loading = false
+      }
+    },
+    // 查看
+    checkPartner(row) {
+      try {
+        this.dialogVisible = true
+        this.PartnerContent = row
+        console.log(row)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    add() {
+      this.showAddDialog = true
+    },
+    async delPartner(row) {
+      // console.log(row)
+      await delPartner(row.id)
+      this.getPartnerRegion()
+    },
+    editPartner(row) {
+      console.log(row)
+      this.showEditDialog = true
+      this.$refs.edit.form = { name: row.name, ratio: row.ratio, contact: row.contact, mobile: row.mobile, id: row.id }
+    },
+    searchPartner() {
+      this.searchCondition.name = this.searchContent
+      this.getPartnerRegion()
+      // console.log(this.searchContent)
+    }
+
+  }
+
 }
 </script>
 
-<style>
-
+<style scoped lang="scss">
+.btn,.editbtn{
+  color:#6486ff ;
+  margin-left: -8px;
+}
+.delbtn{
+  color:#ff5a5a ;
+}
+.delbtn,.editbtn{
+  font-size: 14px;
+}
+.changepwd{
+  font-size: 14px;
+  color:#6486ff ;
+  margin-left: -5px;
+}
+.checkpartner{
+.el-col{
+  padding: 15px;
+}
+}
 </style>

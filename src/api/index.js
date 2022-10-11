@@ -8,5 +8,6 @@ export * from '@/api/region'
 export * from '@/api/skuManage' // by xh
 export * from '@/api/user'
 export * from '@/api/channel'
-export * from '@/api/status'
-export * from '@/api/device'
+export * from '@/api/policy'
+export * from '@/api/order'
+export * from '@/api/report'
