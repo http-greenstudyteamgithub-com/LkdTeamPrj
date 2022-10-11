@@ -126,8 +126,7 @@ export default {
       value: '',
       startDate: '',
       endDate: '',
-      tableData: [
-      ],
+      tableData: [],
       totalCount: 0,
       totalPage: 0,
       pageIndex: 1,
@@ -145,7 +144,7 @@ export default {
 
     // 渲染订单列表
     async getOrderSearchlist() {
-      const { currentPageRecords, pageIndex, pageSize, totalCount, totalPage } = await getOrderSearchAPI(this.pageIndex, this.pageSize, this.orderNo, this.startDate, this.endDate)
+      const { currentPageRecords, pageIndex, pageSize, totalCount, totalPage } = await getOrderSearchAPI(this.pageIndex, this.pageSize)
       this.tableData = currentPageRecords
       this.totalCount = +totalCount
       this.totalPage = +totalPage
@@ -167,15 +166,16 @@ export default {
     async SearchFn() {
       this.startDate = this.value[0]
       this.endDate = this.value[1]
-      this.getOrderSearchlist()
-      // const { currentPageRecords, pageIndex, pageSize, totalCount, totalPage } = await getOrderSearchAPI(this.pageIndex, this.pageSize)
-      // this.tableData = currentPageRecords
-      // this.totalCount = +totalCount
-      // this.totalPage = +totalPage
-      // this.pageIndex = +pageIndex
-      // this.pageSize = +pageSize
+      const { currentPageRecords, pageIndex, pageSize, totalCount, totalPage } = await getOrderSearchAPI(this.pageIndex, this.pageSize, this.orderNo, this.startDate, this.endDate)
+      this.tableData = currentPageRecords
+      this.totalCount = +totalCount
+      this.totalPage = +totalPage
+      this.pageIndex = +pageIndex
+      this.pageSize = +pageSize
       this.orderNo = ''
+      this.value = ''
     }
+
   }
 }
 </script>
